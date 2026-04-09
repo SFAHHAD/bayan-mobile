@@ -64,4 +64,36 @@ class DiwanRepository implements BaseRepository<Diwan> {
   Future<void> delete(String id) async {
     await _client.from(_table).delete().eq('id', id);
   }
+
+  /// Real-time stream — auto-updates on INSERT / UPDATE / DELETE via
+  /// Supabase Realtime. Filters public diwans and orders by live status.
+  Stream<List<Diwan>> watchPublicDiwans() {
+    return _client
+        .from(_table)
+        .stream(primaryKey: ['id'])
+        .order('is_live', ascending: false)
+        .map(
+          (rows) => rows
+              .where((r) => (r['is_public'] as bool?) == true)
+              .map(Diwan.fromMap)
+              .toList(),
+        );
+  }
+
+  /// Called when a user enters a Diwan room.
+  /// Delegates to the Supabase RPC defined in migration 002.
+  Future<void> incrementListenerCount(String diwanId) async {
+    await _client.rpc(
+      'increment_listener_count',
+      params: {'p_diwan_id': diwanId},
+    );
+  }
+
+  /// Called when a user leaves a Diwan room.
+  Future<void> decrementListenerCount(String diwanId) async {
+    await _client.rpc(
+      'decrement_listener_count',
+      params: {'p_diwan_id': diwanId},
+    );
+  }
 }

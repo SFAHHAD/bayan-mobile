@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:bayan/core/theme/theme.dart';
 import 'package:bayan/features/diwan/presentation/diwan_feed_screen.dart';
@@ -17,6 +18,12 @@ class _MainShellState extends State<MainShell> {
   int _currentIndex = 0;
 
   final _screens = const [DiwanFeedScreen(), SearchScreen(), ProfileScreen()];
+
+  void _onTabTap(int index) {
+    if (index == _currentIndex) return;
+    HapticFeedback.selectionClick();
+    setState(() => _currentIndex = index);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,19 +58,19 @@ class _MainShellState extends State<MainShell> {
                 icon: Icons.dashboard_rounded,
                 label: 'الديوانيّات',
                 isSelected: _currentIndex == 0,
-                onTap: () => setState(() => _currentIndex = 0),
+                onTap: () => _onTabTap(0),
               ),
               _NavItem(
                 icon: Icons.search_rounded,
                 label: 'استكشف',
                 isSelected: _currentIndex == 1,
-                onTap: () => setState(() => _currentIndex = 1),
+                onTap: () => _onTabTap(1),
               ),
               _NavItem(
                 icon: Icons.person_rounded,
                 label: 'حسابي',
                 isSelected: _currentIndex == 2,
-                onTap: () => setState(() => _currentIndex = 2),
+                onTap: () => _onTabTap(2),
               ),
             ],
           ),
@@ -104,12 +111,16 @@ class _NavItem extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              icon,
-              size: 24,
-              color: isSelected
-                  ? BayanColors.accent
-                  : BayanColors.textSecondary.withValues(alpha: 0.6),
+            AnimatedScale(
+              scale: isSelected ? 1.15 : 1.0,
+              duration: const Duration(milliseconds: 200),
+              child: Icon(
+                icon,
+                size: 24,
+                color: isSelected
+                    ? BayanColors.accent
+                    : BayanColors.textSecondary.withValues(alpha: 0.6),
+              ),
             ),
             const SizedBox(height: 4),
             Text(

@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bayan/core/theme/theme.dart';
 import 'package:bayan/core/widgets/glassmorphic_container.dart';
-import 'package:bayan/features/waitlist/presentation/screens/landing_screen.dart';
+import 'package:bayan/features/auth/presentation/providers/auth_provider.dart';
+import 'package:bayan/features/onboarding/presentation/onboarding_screen.dart';
+import 'package:bayan/features/shell/presentation/main_shell.dart';
 
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen>
+class _SplashScreenState extends ConsumerState<SplashScreen>
     with TickerProviderStateMixin {
   late final AnimationController _fadeController;
   late final AnimationController _scaleController;
@@ -39,24 +42,51 @@ class _SplashScreenState extends State<SplashScreen>
     );
 
     Future.delayed(const Duration(milliseconds: 300), () {
+      if (!mounted) return;
       _fadeController.forward();
       _scaleController.forward();
     });
 
-    Future.delayed(const Duration(milliseconds: 4000), _navigateToLanding);
+    Future.delayed(const Duration(milliseconds: 4000), _navigateNext);
   }
 
-  void _navigateToLanding() {
+  void _navigateNext() {
     if (!mounted) return;
-    Navigator.of(context).pushReplacement(
-      PageRouteBuilder(
-        pageBuilder: (context, animation1, animation2) => const LandingScreen(),
-        transitionDuration: const Duration(milliseconds: 800),
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          return FadeTransition(opacity: animation, child: child);
-        },
-      ),
-    );
+    final isAuthenticated = ref.read(userProvider).isAuthenticated;
+
+    if (isAuthenticated) {
+      Navigator.of(context).pushReplacement(
+        PageRouteBuilder(
+          pageBuilder: (context, a1, a2) => const MainShell(),
+          transitionDuration: const Duration(milliseconds: 600),
+          transitionsBuilder: (context, animation, _, child) {
+            return FadeTransition(opacity: animation, child: child);
+          },
+        ),
+      );
+    } else {
+      Navigator.of(context).pushReplacement(
+        PageRouteBuilder(
+          pageBuilder: (context, animation1, animation2) => OnboardingScreen(
+            onComplete: () {
+              Navigator.of(context).pushReplacement(
+                PageRouteBuilder(
+                  pageBuilder: (context, a1, a2) => const MainShell(),
+                  transitionDuration: const Duration(milliseconds: 600),
+                  transitionsBuilder: (context, animation, _, child) {
+                    return FadeTransition(opacity: animation, child: child);
+                  },
+                ),
+              );
+            },
+          ),
+          transitionDuration: const Duration(milliseconds: 800),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(opacity: animation, child: child);
+          },
+        ),
+      );
+    }
   }
 
   @override

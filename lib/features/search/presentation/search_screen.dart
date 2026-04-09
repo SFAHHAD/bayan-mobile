@@ -1,7 +1,10 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:bayan/core/theme/theme.dart';
+import 'package:bayan/core/widgets/haptic_button.dart';
+import 'package:bayan/core/widgets/shimmer_skeleton.dart';
 
 class _SearchResult {
   final String title;
@@ -78,6 +81,7 @@ class _SearchScreenState extends State<SearchScreen> {
   final _searchController = TextEditingController();
   final _focusNode = FocusNode();
   bool _hasQuery = false;
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -85,6 +89,10 @@ class _SearchScreenState extends State<SearchScreen> {
     _searchController.addListener(() {
       final hasText = _searchController.text.trim().isNotEmpty;
       if (hasText != _hasQuery) setState(() => _hasQuery = hasText);
+    });
+
+    Future.delayed(const Duration(milliseconds: 800), () {
+      if (mounted) setState(() => _isLoading = false);
     });
   }
 
@@ -97,6 +105,13 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Scaffold(
+        backgroundColor: BayanColors.background,
+        body: SafeArea(child: SearchSkeleton()),
+      );
+    }
+
     return Scaffold(
       backgroundColor: BayanColors.background,
       body: SafeArea(
@@ -163,6 +178,7 @@ class _SearchScreenState extends State<SearchScreen> {
                         size: 20,
                       ),
                       onPressed: () {
+                        HapticFeedback.selectionClick();
                         _searchController.clear();
                         _focusNode.unfocus();
                       },
@@ -243,7 +259,8 @@ class _SearchScreenState extends State<SearchScreen> {
         itemCount: _trendingTopics.length,
         separatorBuilder: (_, _) => const SizedBox(width: 10),
         itemBuilder: (context, index) {
-          return GestureDetector(
+          return HapticButton(
+            hapticType: HapticFeedbackType.selection,
             onTap: () {
               _searchController.text = _trendingTopics[index];
               _focusNode.requestFocus();
@@ -339,61 +356,65 @@ class _ResultTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(18),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-        child: Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: BayanColors.glassBackground,
-            borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: BayanColors.glassBorder),
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(14),
-                  color: _typeColor.withValues(alpha: 0.15),
+    return HapticButton(
+      hapticType: HapticFeedbackType.light,
+      onTap: () {},
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(18),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: BayanColors.glassBackground,
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(color: BayanColors.glassBorder),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(14),
+                    color: _typeColor.withValues(alpha: 0.15),
+                  ),
+                  child: Icon(result.icon, color: _typeColor, size: 24),
                 ),
-                child: Icon(result.icon, color: _typeColor, size: 24),
-              ),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      result.title,
-                      style: GoogleFonts.cairo(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w700,
-                        color: BayanColors.textPrimary,
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        result.title,
+                        style: GoogleFonts.cairo(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
+                          color: BayanColors.textPrimary,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    Text(
-                      result.subtitle,
-                      style: GoogleFonts.cairo(
-                        fontSize: 12,
-                        color: BayanColors.textSecondary,
+                      Text(
+                        result.subtitle,
+                        style: GoogleFonts.cairo(
+                          fontSize: 12,
+                          color: BayanColors.textSecondary,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              const Icon(
-                Icons.chevron_left_rounded,
-                color: BayanColors.textSecondary,
-                size: 22,
-              ),
-            ],
+                const Icon(
+                  Icons.chevron_left_rounded,
+                  color: BayanColors.textSecondary,
+                  size: 22,
+                ),
+              ],
+            ),
           ),
         ),
       ),

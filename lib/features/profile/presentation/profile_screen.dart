@@ -3,12 +3,37 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:bayan/core/theme/theme.dart';
 import 'package:bayan/core/widgets/glassmorphic_container.dart';
+import 'package:bayan/core/widgets/haptic_button.dart';
+import 'package:bayan/core/widgets/founder_glow_badge.dart';
+import 'package:bayan/core/widgets/shimmer_skeleton.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
   @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(const Duration(milliseconds: 900), () {
+      if (mounted) setState(() => _isLoading = false);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Scaffold(
+        backgroundColor: BayanColors.background,
+        body: SafeArea(child: ProfileSkeleton()),
+      );
+    }
+
     return Scaffold(
       backgroundColor: BayanColors.background,
       body: SafeArea(
@@ -20,7 +45,7 @@ class ProfileScreen extends StatelessWidget {
               const SizedBox(height: 32),
               _buildStatsRow(),
               const SizedBox(height: 28),
-              _buildMembershipBadge(),
+              const FounderGlowBadge(),
               const SizedBox(height: 28),
               _buildSettingsSection(),
             ],
@@ -64,14 +89,18 @@ class ProfileScreen extends StatelessWidget {
                   color: BayanColors.textPrimary,
                 ),
               ),
-              GlassmorphicContainer(
-                borderRadius: 14,
-                padding: const EdgeInsets.all(10),
-                blur: 10,
-                child: const Icon(
-                  Icons.edit_rounded,
-                  color: BayanColors.accent,
-                  size: 20,
+              HapticButton(
+                hapticType: HapticFeedbackType.selection,
+                onTap: () {},
+                child: GlassmorphicContainer(
+                  borderRadius: 14,
+                  padding: const EdgeInsets.all(10),
+                  blur: 10,
+                  child: const Icon(
+                    Icons.edit_rounded,
+                    color: BayanColors.accent,
+                    size: 20,
+                  ),
                 ),
               ),
             ],
@@ -80,7 +109,6 @@ class ProfileScreen extends StatelessWidget {
         Positioned(bottom: -40, child: _buildAvatar()),
       ],
     );
-    // Column continues below with name
   }
 
   Widget _buildAvatar() {
@@ -185,76 +213,6 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildMembershipBadge() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: GlassmorphicContainer(
-        borderRadius: 20,
-        padding: const EdgeInsets.all(20),
-        child: Row(
-          children: [
-            Container(
-              width: 52,
-              height: 52,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                gradient: LinearGradient(
-                  colors: [
-                    BayanColors.accent,
-                    BayanColors.accent.withValues(alpha: 0.6),
-                  ],
-                ),
-              ),
-              child: const Icon(
-                Icons.workspace_premium_rounded,
-                color: BayanColors.background,
-                size: 28,
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'عضوية مؤسس',
-                    style: GoogleFonts.cairo(
-                      fontSize: 17,
-                      fontWeight: FontWeight.w700,
-                      color: BayanColors.textPrimary,
-                    ),
-                  ),
-                  Text(
-                    'عضو منذ أبريل ٢٠٢٦',
-                    style: GoogleFonts.cairo(
-                      fontSize: 13,
-                      color: BayanColors.textSecondary,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-              decoration: BoxDecoration(
-                color: BayanColors.accent.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Text(
-                'فعّالة',
-                style: GoogleFonts.cairo(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w700,
-                  color: BayanColors.accent,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   Widget _buildSettingsSection() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -314,25 +272,26 @@ class ProfileScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 20),
-          SizedBox(
-            width: double.infinity,
-            height: 52,
-            child: OutlinedButton(
-              onPressed: () {},
-              style: OutlinedButton.styleFrom(
-                side: BorderSide(
+          HapticButton(
+            hapticType: HapticFeedbackType.medium,
+            onTap: () {},
+            child: Container(
+              width: double.infinity,
+              height: 52,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
                   color: Colors.redAccent.withValues(alpha: 0.4),
                 ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
               ),
-              child: Text(
-                'تسجيل الخروج',
-                style: GoogleFonts.cairo(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.redAccent.withValues(alpha: 0.8),
+              child: Center(
+                child: Text(
+                  'تسجيل الخروج',
+                  style: GoogleFonts.cairo(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.redAccent.withValues(alpha: 0.8),
+                  ),
                 ),
               ),
             ),
@@ -403,8 +362,10 @@ class _SettingsTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        InkWell(
+        HapticButton(
+          hapticType: HapticFeedbackType.selection,
           onTap: () {},
+          borderRadius: BorderRadius.zero,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             child: Row(

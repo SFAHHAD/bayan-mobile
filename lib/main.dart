@@ -4,6 +4,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:bayan/core/config/supabase_config.dart';
+import 'package:bayan/core/services/cache_service.dart';
 import 'package:bayan/core/theme/theme.dart';
 import 'package:bayan/features/waitlist/presentation/screens/splash_screen.dart';
 
@@ -25,6 +26,8 @@ void main() async {
     url: SupabaseConfig.url,
     anonKey: SupabaseConfig.anonKey,
   );
+
+  await CacheService.init();
 
   runApp(const ProviderScope(child: BayanApp()));
 }

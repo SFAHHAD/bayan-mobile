@@ -1,78 +1,100 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:bayan/core/models/diwan.dart';
 import 'package:bayan/core/theme/theme.dart';
 import 'package:bayan/core/widgets/glassmorphic_container.dart';
+import 'package:bayan/features/diwan/presentation/providers/diwan_provider.dart';
+import 'package:bayan/core/widgets/pulsing_dot.dart';
+import 'package:bayan/core/widgets/haptic_button.dart';
+import 'package:bayan/core/widgets/shimmer_skeleton.dart';
+import 'package:bayan/features/diwan/presentation/diwan_detail_screen.dart';
 
 class _DiwanData {
+  final String id;
   final String name;
   final String host;
   final int voiceCount;
   final int listenerCount;
   final bool isLive;
+  final IconData icon;
   final List<Color> gradientColors;
 
   const _DiwanData({
+    required this.id,
     required this.name,
     required this.host,
     required this.voiceCount,
     required this.listenerCount,
     required this.isLive,
+    required this.icon,
     required this.gradientColors,
   });
 }
 
 final _placeholderDiwans = [
   _DiwanData(
+    id: 'diwan-1',
     name: 'ديوان الشعر الحديث',
     host: 'عبدالله المطيري',
     voiceCount: 14,
     listenerCount: 87,
     isLive: true,
+    icon: Icons.auto_stories_rounded,
     gradientColors: [
       BayanColors.accent.withValues(alpha: 0.3),
       BayanColors.surface,
     ],
   ),
   _DiwanData(
+    id: 'diwan-2',
     name: 'نقاشات تقنية',
     host: 'سارة الفهد',
     voiceCount: 8,
     listenerCount: 124,
     isLive: true,
+    icon: Icons.memory_rounded,
     gradientColors: [
       const Color(0xFF6C3FA0).withValues(alpha: 0.4),
       BayanColors.surface,
     ],
   ),
   _DiwanData(
+    id: 'diwan-3',
     name: 'ديوان الأدب الكويتي',
     host: 'فهد العنزي',
     voiceCount: 22,
     listenerCount: 203,
     isLive: true,
+    icon: Icons.menu_book_rounded,
     gradientColors: [
       const Color(0xFF2A6F97).withValues(alpha: 0.4),
       BayanColors.surface,
     ],
   ),
   _DiwanData(
+    id: 'diwan-4',
     name: 'صالون الفكر العربي',
     host: 'نورة الصباح',
     voiceCount: 6,
     listenerCount: 56,
     isLive: false,
+    icon: Icons.psychology_rounded,
     gradientColors: [
       const Color(0xFF8B5E3C).withValues(alpha: 0.3),
       BayanColors.surface,
     ],
   ),
   _DiwanData(
+    id: 'diwan-5',
     name: 'ديوان ريادة الأعمال',
     host: 'محمد الراشد',
     voiceCount: 11,
     listenerCount: 142,
     isLive: false,
+    icon: Icons.rocket_launch_rounded,
     gradientColors: [
       BayanColors.accent.withValues(alpha: 0.2),
       const Color(0xFF6C3FA0).withValues(alpha: 0.2),
@@ -80,14 +102,44 @@ final _placeholderDiwans = [
   ),
 ];
 
-class DiwanFeedScreen extends StatefulWidget {
+_DiwanData _toDiwanData(Diwan d, int index) {
+  const palettes = [
+    [Color(0xFF5CBFAD), Color(0xFF2E1A3E)],
+    [Color(0xFF6C3FA0), Color(0xFF2E1A3E)],
+    [Color(0xFF2A6F97), Color(0xFF2E1A3E)],
+    [Color(0xFF8B5E3C), Color(0xFF2E1A3E)],
+    [Color(0xFF5CBFAD), Color(0xFF6C3FA0)],
+  ];
+  const icons = [
+    Icons.auto_stories_rounded,
+    Icons.memory_rounded,
+    Icons.menu_book_rounded,
+    Icons.psychology_rounded,
+    Icons.rocket_launch_rounded,
+  ];
+  final colors = palettes[index % palettes.length]
+      .map((c) => c.withValues(alpha: d.isLive ? 0.35 : 0.2))
+      .toList();
+  return _DiwanData(
+    id: d.id,
+    name: d.title,
+    host: d.hostName ?? 'المضيف',
+    voiceCount: d.voiceCount,
+    listenerCount: d.listenerCount,
+    isLive: d.isLive,
+    icon: icons[index % icons.length],
+    gradientColors: colors,
+  );
+}
+
+class DiwanFeedScreen extends ConsumerStatefulWidget {
   const DiwanFeedScreen({super.key});
 
   @override
-  State<DiwanFeedScreen> createState() => _DiwanFeedScreenState();
+  ConsumerState<DiwanFeedScreen> createState() => _DiwanFeedScreenState();
 }
 
-class _DiwanFeedScreenState extends State<DiwanFeedScreen>
+class _DiwanFeedScreenState extends ConsumerState<DiwanFeedScreen>
     with SingleTickerProviderStateMixin {
   late final AnimationController _staggerController;
 
@@ -96,7 +148,7 @@ class _DiwanFeedScreenState extends State<DiwanFeedScreen>
     super.initState();
     _staggerController = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 400 + _placeholderDiwans.length * 150),
+      duration: const Duration(milliseconds: 1200),
     )..forward();
   }
 
@@ -106,15 +158,62 @@ class _DiwanFeedScreenState extends State<DiwanFeedScreen>
     super.dispose();
   }
 
+  void _openDiwan(_DiwanData diwan) {
+    HapticFeedback.mediumImpact();
+    Navigator.of(context).push(
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            DiwanDetailScreen(
+              heroTag: 'diwan-icon-${diwan.id}',
+              name: diwan.name,
+              host: diwan.host,
+              icon: diwan.icon,
+              voiceCount: diwan.voiceCount,
+              listenerCount: diwan.listenerCount,
+              isLive: diwan.isLive,
+              gradientColors: diwan.gradientColors,
+            ),
+        transitionDuration: const Duration(milliseconds: 500),
+        reverseTransitionDuration: const Duration(milliseconds: 400),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(
+            opacity: CurvedAnimation(parent: animation, curve: Curves.easeOut),
+            child: child,
+          );
+        },
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final async = ref.watch(diwanNotifierProvider);
+
+    if (async.isLoading && !async.hasValue) {
+      return const Scaffold(
+        backgroundColor: BayanColors.background,
+        body: SafeArea(child: DiwanFeedSkeleton()),
+      );
+    }
+
+    final diwans = async.maybeWhen(
+      data: (list) => list.isEmpty
+          ? _placeholderDiwans
+          : list
+                .asMap()
+                .entries
+                .map((e) => _toDiwanData(e.value, e.key))
+                .toList(),
+      orElse: () => _placeholderDiwans,
+    );
+
     return Scaffold(
       backgroundColor: BayanColors.background,
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
             SliverToBoxAdapter(child: _buildHeader()),
-            SliverToBoxAdapter(child: _buildLiveIndicator()),
+            SliverToBoxAdapter(child: _buildLiveIndicator(diwans)),
             SliverPadding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               sliver: SliverList(
@@ -136,10 +235,13 @@ class _DiwanFeedScreenState extends State<DiwanFeedScreen>
                     },
                     child: Padding(
                       padding: const EdgeInsets.only(bottom: 16),
-                      child: _DiwanCard(diwan: _placeholderDiwans[index]),
+                      child: _DiwanCard(
+                        diwan: diwans[index],
+                        onTap: () => _openDiwan(diwans[index]),
+                      ),
                     ),
                   );
-                }, childCount: _placeholderDiwans.length),
+                }, childCount: diwans.length),
               ),
             ),
             const SliverToBoxAdapter(child: SizedBox(height: 100)),
@@ -184,14 +286,18 @@ class _DiwanFeedScreenState extends State<DiwanFeedScreen>
               ],
             ),
           ),
-          GlassmorphicContainer(
-            borderRadius: 16,
-            padding: const EdgeInsets.all(12),
-            blur: 10,
-            child: const Icon(
-              Icons.tune_rounded,
-              color: BayanColors.accent,
-              size: 22,
+          HapticButton(
+            hapticType: HapticFeedbackType.selection,
+            onTap: () {},
+            child: GlassmorphicContainer(
+              borderRadius: 16,
+              padding: const EdgeInsets.all(12),
+              blur: 10,
+              child: const Icon(
+                Icons.tune_rounded,
+                color: BayanColors.accent,
+                size: 22,
+              ),
             ),
           ),
         ],
@@ -199,28 +305,14 @@ class _DiwanFeedScreenState extends State<DiwanFeedScreen>
     );
   }
 
-  Widget _buildLiveIndicator() {
-    final liveCount = _placeholderDiwans.where((d) => d.isLive).length;
+  Widget _buildLiveIndicator(List<_DiwanData> diwans) {
+    final liveCount = diwans.where((d) => d.isLive).length;
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 16, 24, 20),
       child: Row(
         children: [
-          Container(
-            width: 10,
-            height: 10,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: BayanColors.accent,
-              boxShadow: [
-                BoxShadow(
-                  color: BayanColors.accent.withValues(alpha: 0.5),
-                  blurRadius: 8,
-                  spreadRadius: 1,
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 10),
+          const PulsingDot(color: BayanColors.accent, size: 8),
+          const SizedBox(width: 8),
           Text(
             '$liveCount ديوانيّات مباشرة الآن',
             style: GoogleFonts.cairo(
@@ -237,110 +329,127 @@ class _DiwanFeedScreenState extends State<DiwanFeedScreen>
 
 class _DiwanCard extends StatelessWidget {
   final _DiwanData diwan;
+  final VoidCallback onTap;
 
-  const _DiwanCard({required this.diwan});
+  const _DiwanCard({required this.diwan, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
+    return HapticButton(
+      onTap: onTap,
       borderRadius: BorderRadius.circular(24),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(24),
-            gradient: LinearGradient(
-              begin: Alignment.topRight,
-              end: Alignment.bottomLeft,
-              colors: diwan.gradientColors,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(24),
+              gradient: LinearGradient(
+                begin: Alignment.topRight,
+                end: Alignment.bottomLeft,
+                colors: diwan.gradientColors,
+              ),
+              border: Border.all(color: BayanColors.glassBorder, width: 1),
             ),
-            border: Border.all(color: BayanColors.glassBorder, width: 1),
-          ),
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  if (diwan.isLive) ...[
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: BayanColors.accent.withValues(alpha: 0.2),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: BayanColors.accent.withValues(alpha: 0.4),
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Hero(
+                      tag: 'diwan-icon-${diwan.id}',
+                      child: Container(
+                        width: 44,
+                        height: 44,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(14),
+                          color: diwan.gradientColors.first.withValues(
+                            alpha: 0.5,
+                          ),
+                        ),
+                        child: Icon(
+                          diwan.icon,
+                          color: BayanColors.textPrimary,
+                          size: 22,
                         ),
                       ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Container(
-                            width: 7,
-                            height: 7,
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: BayanColors.accent,
-                            ),
-                          ),
-                          const SizedBox(width: 6),
                           Text(
-                            'مباشر',
+                            diwan.name,
                             style: GoogleFonts.cairo(
-                              fontSize: 12,
+                              fontSize: 17,
                               fontWeight: FontWeight.w700,
-                              color: BayanColors.accent,
+                              color: BayanColors.textPrimary,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          Text(
+                            diwan.host,
+                            style: GoogleFonts.cairo(
+                              fontSize: 13,
+                              color: BayanColors.textSecondary,
                             ),
                           ),
                         ],
                       ),
                     ),
-                    const SizedBox(width: 10),
+                    if (diwan.isLive) _buildLiveBadge(),
                   ],
-                  Expanded(
-                    child: Text(
-                      diwan.name,
-                      style: GoogleFonts.cairo(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                        color: BayanColors.textPrimary,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              Text(
-                'المضيف: ${diwan.host}',
-                style: GoogleFonts.cairo(
-                  fontSize: 13,
-                  color: BayanColors.textSecondary,
                 ),
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  _StatChip(
-                    icon: Icons.mic_rounded,
-                    label: '${diwan.voiceCount} صوت',
-                  ),
-                  const SizedBox(width: 12),
-                  _StatChip(
-                    icon: Icons.headphones_rounded,
-                    label: '${diwan.listenerCount} مستمع',
-                  ),
-                  const Spacer(),
-                  _EnterButton(isLive: diwan.isLive),
-                ],
-              ),
-            ],
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    _StatChip(
+                      icon: Icons.mic_rounded,
+                      label: '${diwan.voiceCount} صوت',
+                    ),
+                    const SizedBox(width: 12),
+                    _StatChip(
+                      icon: Icons.headphones_rounded,
+                      label: '${diwan.listenerCount} مستمع',
+                    ),
+                    const Spacer(),
+                    _EnterChip(isLive: diwan.isLive),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildLiveBadge() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      decoration: BoxDecoration(
+        color: BayanColors.accent.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: BayanColors.accent.withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const PulsingDot(color: BayanColors.accent, size: 6),
+          const SizedBox(width: 4),
+          Text(
+            'مباشر',
+            style: GoogleFonts.cairo(
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
+              color: BayanColors.accent,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -372,33 +481,27 @@ class _StatChip extends StatelessWidget {
   }
 }
 
-class _EnterButton extends StatelessWidget {
+class _EnterChip extends StatelessWidget {
   final bool isLive;
 
-  const _EnterButton({required this.isLive});
+  const _EnterChip({required this.isLive});
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: isLive
-          ? BayanColors.accent
-          : BayanColors.textSecondary.withValues(alpha: 0.2),
-      borderRadius: BorderRadius.circular(14),
-      child: InkWell(
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      decoration: BoxDecoration(
+        color: isLive
+            ? BayanColors.accent
+            : BayanColors.textSecondary.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(14),
-        onTap: () {},
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          child: Text(
-            isLive ? 'ادخل' : 'تذكير',
-            style: GoogleFonts.cairo(
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-              color: isLive
-                  ? BayanColors.background
-                  : BayanColors.textSecondary,
-            ),
-          ),
+      ),
+      child: Text(
+        isLive ? 'ادخل' : 'تذكير',
+        style: GoogleFonts.cairo(
+          fontSize: 14,
+          fontWeight: FontWeight.w700,
+          color: isLive ? BayanColors.background : BayanColors.textSecondary,
         ),
       ),
     );
