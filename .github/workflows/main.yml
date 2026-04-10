@@ -1,0 +1,97 @@
+name: Bayan Mobile CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # 1. Lint & Test
+  # ---------------------------------------------------------------------------
+  test:
+    name: Analyze & Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.x"
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Flutter Analyze
+        run: flutter analyze lib/ test/
+
+      - name: Run all tests
+        run: flutter test --coverage
+
+      - name: Upload coverage report
+        uses: codecov/codecov-action@v4
+        with:
+          file: coverage/lcov.info
+          flags: flutter
+          fail_ci_if_error: false
+
+  # ---------------------------------------------------------------------------
+  # 2. Build Android App Bundle (AAB)
+  # ---------------------------------------------------------------------------
+  build-android:
+    name: Build Android AAB
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.x"
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Decode keystore
+        if: github.ref == 'refs/heads/main'
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/bayan-release.jks
+        shell: bash
+
+      - name: Create key.properties
+        if: github.ref == 'refs/heads/main'
+        run: |
+          cat > android/key.properties <<EOF
+          storePassword=${{ secrets.KEYSTORE_PASSWORD }}
+          keyPassword=${{ secrets.KEY_PASSWORD }}
+          keyAlias=${{ secrets.KEY_ALIAS }}
+          storeFile=bayan-release.jks
+          EOF
+        shell: bash
+
+      - name: Build release AAB
+        run: flutter build appbundle --release
+
+      - name: Upload AAB artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: bayan-release-${{ github.sha }}
+          path: build/app/outputs/bundle/release/app-release.aab
+          retention-days: 14

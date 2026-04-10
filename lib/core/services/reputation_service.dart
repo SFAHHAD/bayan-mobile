@@ -46,6 +46,51 @@ class ReputationService {
   void clearCache() => _cache.clear();
 
   // -------------------------------------------------------------------------
+  // Verified Professional weighted rewards
+  // -------------------------------------------------------------------------
+
+  /// Returns the multiplier applied to XP/score events for a verified
+  /// professional user.  Verified professionals earn 1.5× the base score.
+  static const double verifiedProfessionalMultiplier = 1.5;
+
+  /// Applies the Verified Professional multiplier if [userId] is a verified
+  /// professional (i.e. their verifiedProComponent > 0).
+  /// Returns the weighted score, rounded to the nearest int.
+  Future<int> applyVerifiedProfessionalWeight(
+    String userId,
+    int baseScore,
+  ) async {
+    final ts = await getTrustScore(userId);
+    if (ts.verifiedProComponent > 0) {
+      return (baseScore * verifiedProfessionalMultiplier).round();
+    }
+    return baseScore;
+  }
+
+  /// Returns the effective trust score with the Verified Professional bonus
+  /// already baked in.  Refreshes the cache.
+  Future<TrustScore> getWeightedTrustScore(String userId) async {
+    final ts = await refreshTrustScore(userId);
+    if (ts.verifiedProComponent <= 0) return ts;
+
+    final weightedScore = (ts.score * verifiedProfessionalMultiplier)
+        .round()
+        .clamp(0, 100);
+
+    final weighted = TrustScore(
+      userId: ts.userId,
+      score: weightedScore,
+      xpComponent: ts.xpComponent,
+      streakComponent: ts.streakComponent,
+      governanceComponent: ts.governanceComponent,
+      subscriptionComponent: ts.subscriptionComponent,
+      verifiedProComponent: ts.verifiedProComponent,
+    );
+    _cache[userId] = weighted;
+    return weighted;
+  }
+
+  // -------------------------------------------------------------------------
   // Internal
   // -------------------------------------------------------------------------
 

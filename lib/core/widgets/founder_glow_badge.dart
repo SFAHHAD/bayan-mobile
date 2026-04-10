@@ -115,10 +115,29 @@ class _FounderGlowBadgeState extends State<FounderGlowBadge>
               ),
             ],
           ),
-          child: const Icon(
-            Icons.workspace_premium_rounded,
-            color: BayanColors.background,
-            size: 28,
+          child: ShaderMask(
+            shaderCallback: (bounds) => LinearGradient(
+              begin: Alignment(-1.0 + _glowController.value * 3, -0.5),
+              end: Alignment(-0.5 + _glowController.value * 3, 0.5),
+              colors: const [
+                Color(0x00FFFFFF),
+                Color(0x80FFFFFF),
+                Color(0x00FFFFFF),
+              ],
+              stops: const [0.0, 0.5, 1.0],
+            ).createShader(bounds),
+            blendMode: BlendMode.srcATop,
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                color: Colors.white.withValues(alpha: 0.08 + glow * 0.08),
+              ),
+              child: const Icon(
+                Icons.workspace_premium_rounded,
+                color: BayanColors.background,
+                size: 28,
+              ),
+            ),
           ),
         );
       },
@@ -154,16 +173,28 @@ class _FounderGlowBadgeState extends State<FounderGlowBadge>
       animation: _glowController,
       builder: (context, child) {
         final pulse = (math.sin(_glowController.value * 2 * math.pi) + 1) / 2;
-        return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-          decoration: BoxDecoration(
-            color: BayanColors.accent.withValues(alpha: 0.1 + pulse * 0.08),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: BayanColors.accent.withValues(alpha: 0.2 + pulse * 0.15),
+        return ShaderMask(
+          shaderCallback: (bounds) => LinearGradient(
+            begin: Alignment(-1.5 + _glowController.value * 3, 0),
+            end: Alignment(-0.5 + _glowController.value * 3, 0),
+            colors: [
+              const Color(0xFFD4AF37),
+              BayanColors.accent,
+              const Color(0xFFD4AF37),
+            ],
+          ).createShader(bounds),
+          blendMode: BlendMode.srcIn,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+            decoration: BoxDecoration(
+              color: BayanColors.accent.withValues(alpha: 0.1 + pulse * 0.08),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: BayanColors.accent.withValues(alpha: 0.2 + pulse * 0.15),
+              ),
             ),
+            child: child,
           ),
-          child: child,
         );
       },
       child: Text(

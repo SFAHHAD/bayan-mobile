@@ -500,10 +500,11 @@ class TrustMeter extends StatefulWidget {
   State<TrustMeter> createState() => _TrustMeterState();
 }
 
-class _TrustMeterState extends State<TrustMeter>
-    with SingleTickerProviderStateMixin {
+class _TrustMeterState extends State<TrustMeter> with TickerProviderStateMixin {
   late final AnimationController _controller;
-  late final Animation<double> _animation;
+  late final AnimationController _bounceController;
+  late Animation<double> _animation;
+  late Animation<double> _bounceAnimation;
 
   @override
   void initState() {
@@ -512,10 +513,56 @@ class _TrustMeterState extends State<TrustMeter>
       vsync: this,
       duration: const Duration(milliseconds: 1200),
     );
+    _bounceController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 600),
+    );
     _animation = Tween<double>(
       begin: 0,
       end: widget.score,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
+    _bounceAnimation = Tween<double>(
+      begin: 1.0,
+      end: 1.0,
+    ).animate(_bounceController);
+
+    _controller.addStatusListener((status) {
+      if (status == AnimationStatus.completed && widget.score >= 0.7) {
+        _bounceAnimation = TweenSequence<double>([
+          TweenSequenceItem(
+            tween: Tween(
+              begin: 1.0,
+              end: 1.12,
+            ).chain(CurveTween(curve: Curves.easeOut)),
+            weight: 30,
+          ),
+          TweenSequenceItem(
+            tween: Tween(
+              begin: 1.12,
+              end: 0.95,
+            ).chain(CurveTween(curve: Curves.easeIn)),
+            weight: 25,
+          ),
+          TweenSequenceItem(
+            tween: Tween(
+              begin: 0.95,
+              end: 1.04,
+            ).chain(CurveTween(curve: Curves.easeOut)),
+            weight: 25,
+          ),
+          TweenSequenceItem(
+            tween: Tween(
+              begin: 1.04,
+              end: 1.0,
+            ).chain(CurveTween(curve: Curves.easeIn)),
+            weight: 20,
+          ),
+        ]).animate(_bounceController);
+        HapticFeedback.mediumImpact();
+        _bounceController.forward();
+      }
+    });
+
     Future.delayed(const Duration(milliseconds: 300), () {
       if (mounted) _controller.forward();
     });
@@ -524,45 +571,49 @@ class _TrustMeterState extends State<TrustMeter>
   @override
   void dispose() {
     _controller.dispose();
+    _bounceController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: widget.size,
-      height: widget.size * 0.7,
-      child: AnimatedBuilder(
-        animation: _animation,
-        builder: (context, _) {
-          return CustomPaint(
-            painter: _TrustGaugePainter(score: _animation.value),
-            child: Align(
-              alignment: const Alignment(0, 0.5),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    '${(_animation.value * 100).round()}',
-                    style: GoogleFonts.cairo(
-                      fontSize: widget.size * 0.18,
-                      fontWeight: FontWeight.w800,
-                      color: _scoreColor(_animation.value),
+    return AnimatedBuilder(
+      animation: Listenable.merge([_animation, _bounceController]),
+      builder: (context, _) {
+        return Transform.scale(
+          scale: _bounceAnimation.value,
+          child: SizedBox(
+            width: widget.size,
+            height: widget.size * 0.7,
+            child: CustomPaint(
+              painter: _TrustGaugePainter(score: _animation.value),
+              child: Align(
+                alignment: const Alignment(0, 0.5),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      '${(_animation.value * 100).round()}',
+                      style: GoogleFonts.cairo(
+                        fontSize: widget.size * 0.18,
+                        fontWeight: FontWeight.w800,
+                        color: _scoreColor(_animation.value),
+                      ),
                     ),
-                  ),
-                  Text(
-                    'مؤشر الثقة',
-                    style: GoogleFonts.cairo(
-                      fontSize: widget.size * 0.07,
-                      color: BayanColors.textSecondary,
+                    Text(
+                      'مؤشر الثقة',
+                      style: GoogleFonts.cairo(
+                        fontSize: widget.size * 0.07,
+                        color: BayanColors.textSecondary,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 

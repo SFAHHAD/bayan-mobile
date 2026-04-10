@@ -30,6 +30,8 @@ import 'package:bayan/core/repositories/governance_repository.dart';
 import 'package:bayan/core/services/crash_recovery_service.dart';
 import 'package:bayan/core/services/payment_service.dart';
 import 'package:bayan/core/services/prefetch_service.dart';
+import 'package:bayan/core/repositories/transcription_repository.dart';
+import 'package:bayan/core/services/pdf_report_service.dart';
 import 'package:bayan/core/services/reputation_service.dart';
 
 final supabaseClientProvider = Provider<SupabaseClient>(
@@ -161,4 +163,12 @@ final reputationServiceProvider = Provider<ReputationService>(
 
 final paymentServiceProvider = Provider<PaymentService>(
   (ref) => PaymentService(ref.read(subscriptionRepositoryProvider)),
+);
+
+final transcriptionRepositoryProvider = Provider<TranscriptionRepository>(
+  (ref) => TranscriptionRepository(ref.read(supabaseClientProvider)),
+);
+
+final pdfReportServiceProvider = Provider<PdfReportService>(
+  (_) => PdfReportService(),
 );

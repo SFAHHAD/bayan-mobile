@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:bayan/core/theme/theme.dart';
 import 'package:bayan/core/widgets/glassmorphic_container.dart';
 import 'package:bayan/core/widgets/haptic_button.dart';
+import 'package:bayan/core/widgets/diwan_theme_engine.dart';
 
 class _SeriesData {
   final String title;
@@ -114,6 +115,7 @@ class _CreatorStudioScreenState extends State<CreatorStudioScreen>
           slivers: [
             SliverToBoxAdapter(child: _buildHeader(context)),
             SliverToBoxAdapter(child: _buildQuickActions()),
+            SliverToBoxAdapter(child: _buildThemeSelector(context)),
             SliverToBoxAdapter(child: _buildAudienceGrowth()),
             SliverToBoxAdapter(child: _buildSeriesSection()),
             SliverToBoxAdapter(child: _buildScheduledEvents()),
@@ -214,6 +216,82 @@ class _CreatorStudioScreenState extends State<CreatorStudioScreen>
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildThemeSelector(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+      child: HapticButton(
+        hapticType: HapticFeedbackType.medium,
+        onTap: () => showThemeSelector(context),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(18),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(18),
+                gradient: LinearGradient(
+                  colors: [
+                    BayanColors.accent.withValues(alpha: 0.08),
+                    const Color(0xFFD4AF37).withValues(alpha: 0.05),
+                  ],
+                ),
+                border: Border.all(color: BayanColors.glassBorder),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    width: 42,
+                    height: 42,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: const LinearGradient(
+                        colors: [BayanColors.accent, Color(0xFFD4AF37)],
+                      ),
+                    ),
+                    child: const Icon(
+                      Icons.palette_rounded,
+                      color: BayanColors.background,
+                      size: 20,
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'الهوية البصرية',
+                          style: GoogleFonts.cairo(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
+                            color: BayanColors.textPrimary,
+                          ),
+                        ),
+                        Text(
+                          'اختر ثيم مميز لمجالسك',
+                          style: GoogleFonts.cairo(
+                            fontSize: 11,
+                            color: BayanColors.textSecondary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Icon(
+                    Icons.chevron_left_rounded,
+                    color: BayanColors.textSecondary,
+                    size: 22,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }

@@ -6,6 +6,7 @@ class TrustScore {
   final int streakComponent;
   final int governanceComponent;
   final int subscriptionComponent;
+  final int verifiedProComponent;
 
   const TrustScore({
     required this.userId,
@@ -14,6 +15,7 @@ class TrustScore {
     required this.streakComponent,
     required this.governanceComponent,
     required this.subscriptionComponent,
+    this.verifiedProComponent = 0,
   });
 
   factory TrustScore.fromMap(String userId, Map<String, dynamic> map) {
@@ -24,6 +26,7 @@ class TrustScore {
       streakComponent: (map['streak_component'] as int?) ?? 0,
       governanceComponent: (map['governance_component'] as int?) ?? 0,
       subscriptionComponent: (map['subscription_component'] as int?) ?? 0,
+      verifiedProComponent: (map['verified_pro_component'] as int?) ?? 0,
     );
   }
 
@@ -34,6 +37,7 @@ class TrustScore {
     streakComponent: 0,
     governanceComponent: 0,
     subscriptionComponent: 0,
+    verifiedProComponent: 0,
   );
 
   // -------------------------------------------------------------------------

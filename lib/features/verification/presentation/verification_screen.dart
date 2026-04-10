@@ -722,32 +722,40 @@ class _BlueFeatherBadgeState extends State<BlueFeatherBadge>
     return SizedBox(
       width: widget.size + 12,
       height: widget.size + 12,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          AnimatedBuilder(
-            animation: _shimmerController,
-            builder: (context, _) {
-              return CustomPaint(
+      child: AnimatedBuilder(
+        animation: _shimmerController,
+        builder: (context, _) {
+          return Stack(
+            alignment: Alignment.center,
+            children: [
+              CustomPaint(
                 painter: _BlueFeatherGlowPainter(
                   progress: _shimmerController.value,
                 ),
                 size: Size(widget.size + 12, widget.size + 12),
-              );
-            },
-          ),
-          SizedBox(
-            width: widget.size,
-            height: widget.size,
-            child: widget.child,
-          ),
-          Positioned(
-            bottom: 0,
-            right: 0,
-            child: AnimatedBuilder(
-              animation: _shimmerController,
-              builder: (context, child) {
-                return ShaderMask(
+              ),
+              ShaderMask(
+                shaderCallback: (bounds) => LinearGradient(
+                  begin: Alignment(-2.0 + _shimmerController.value * 4, -0.5),
+                  end: Alignment(-1.0 + _shimmerController.value * 4, 0.5),
+                  colors: const [
+                    Color(0x00FFFFFF),
+                    Color(0x30FFFFFF),
+                    Color(0x00FFFFFF),
+                  ],
+                  stops: const [0.0, 0.5, 1.0],
+                ).createShader(bounds),
+                blendMode: BlendMode.srcATop,
+                child: SizedBox(
+                  width: widget.size,
+                  height: widget.size,
+                  child: widget.child,
+                ),
+              ),
+              Positioned(
+                bottom: 0,
+                right: 0,
+                child: ShaderMask(
                   shaderCallback: (bounds) => LinearGradient(
                     colors: const [
                       Color(0xFF2A6F97),
@@ -756,26 +764,28 @@ class _BlueFeatherBadgeState extends State<BlueFeatherBadge>
                     ],
                     stops: [0.0, _shimmerController.value, 1.0],
                   ).createShader(bounds),
-                  child: child,
-                );
-              },
-              child: Container(
-                width: 26,
-                height: 26,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: BayanColors.surface,
-                  border: Border.all(color: BayanColors.background, width: 2),
-                ),
-                child: const Icon(
-                  Icons.verified_rounded,
-                  size: 16,
-                  color: Colors.white,
+                  child: Container(
+                    width: 26,
+                    height: 26,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: BayanColors.surface,
+                      border: Border.all(
+                        color: BayanColors.background,
+                        width: 2,
+                      ),
+                    ),
+                    child: const Icon(
+                      Icons.verified_rounded,
+                      size: 16,
+                      color: Colors.white,
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ),
-        ],
+            ],
+          );
+        },
       ),
     );
   }
