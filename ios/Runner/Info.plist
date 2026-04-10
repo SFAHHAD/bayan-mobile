@@ -66,6 +66,19 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>com.bayan.app</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>bayan</string>
+			</array>
+		</dict>
+	</array>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>بَيَان يحتاج إلى الميكروفون للمشاركة في الديوانيّات الصوتية</string>
 	<key>NSCameraUsageDescription</key>

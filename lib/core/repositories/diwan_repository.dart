@@ -81,6 +81,22 @@ class DiwanRepository implements BaseRepository<Diwan> {
   }
 
   // -------------------------------------------------------------------------
+  // Cursor-based pagination
+  // -------------------------------------------------------------------------
+
+  /// Returns a page of public diwans older than [before] (cursor by created_at).
+  Future<List<Diwan>> getPublicPaged({DateTime? before, int limit = 15}) async {
+    var query = _client.from(_table).select().eq('is_public', true);
+    if (before != null) {
+      query = query.lt('created_at', before.toIso8601String());
+    }
+    final data = await query.order('created_at', ascending: false).limit(limit);
+    return (data as List)
+        .map((r) => Diwan.fromMap(r as Map<String, dynamic>))
+        .toList();
+  }
+
+  // -------------------------------------------------------------------------
   // Trending
   // -------------------------------------------------------------------------
 

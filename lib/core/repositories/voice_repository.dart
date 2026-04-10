@@ -84,6 +84,42 @@ class VoiceRepository {
         .toList();
   }
 
+  // -------------------------------------------------------------------------
+  // Cursor-based pagination (voice gallery)
+  // -------------------------------------------------------------------------
+
+  /// Returns a page of voice clips for [diwanId] older than [before].
+  Future<List<VoiceClip>> getVoicesForDiwanPaged(
+    String diwanId, {
+    DateTime? before,
+    int limit = 20,
+  }) async {
+    var query = _client.from(_table).select().eq('diwan_id', diwanId);
+    if (before != null) {
+      query = query.lt('created_at', before.toIso8601String());
+    }
+    final data = await query.order('created_at', ascending: false).limit(limit);
+    return (data as List)
+        .map((r) => VoiceClip.fromMap(r as Map<String, dynamic>))
+        .toList();
+  }
+
+  /// Returns a page of voice clips for [speakerId] older than [before].
+  Future<List<VoiceClip>> getVoicesForSpeakerPaged(
+    String speakerId, {
+    DateTime? before,
+    int limit = 20,
+  }) async {
+    var query = _client.from(_table).select().eq('speaker_id', speakerId);
+    if (before != null) {
+      query = query.lt('created_at', before.toIso8601String());
+    }
+    final data = await query.order('created_at', ascending: false).limit(limit);
+    return (data as List)
+        .map((r) => VoiceClip.fromMap(r as Map<String, dynamic>))
+        .toList();
+  }
+
   /// Real-time stream of voice clips for a specific diwan.
   Stream<List<VoiceClip>> watchVoicesForDiwan(String diwanId) {
     return _client

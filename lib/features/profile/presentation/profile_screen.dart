@@ -10,6 +10,7 @@ import 'package:bayan/core/widgets/audio_waveform_painter.dart';
 import 'package:bayan/core/widgets/haptic_button.dart';
 import 'package:bayan/core/widgets/voice_card.dart';
 import 'package:bayan/core/widgets/elite_avatar_badge.dart';
+import 'package:bayan/core/widgets/insights_charts.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -209,7 +210,7 @@ class _ProfileScreenState extends State<ProfileScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
     Future.delayed(const Duration(milliseconds: 900), () {
       if (mounted) setState(() => _isLoading = false);
     });
@@ -247,7 +248,11 @@ class _ProfileScreenState extends State<ProfileScreen>
           ],
           body: TabBarView(
             controller: _tabController,
-            children: [_buildVoiceGalleryTab(), _buildAboutTab()],
+            children: [
+              _buildVoiceGalleryTab(),
+              const InsightsTab(),
+              _buildAboutTab(),
+            ],
           ),
         ),
       ),
@@ -450,6 +455,7 @@ class _ProfileScreenState extends State<ProfileScreen>
           ),
           tabs: const [
             Tab(text: 'معرض الأصوات'),
+            Tab(text: 'الإحصائيات'),
             Tab(text: 'الإعدادات'),
           ],
           onTap: (_) => HapticFeedback.selectionClick(),

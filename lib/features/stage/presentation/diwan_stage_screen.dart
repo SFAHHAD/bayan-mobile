@@ -10,6 +10,8 @@ import 'package:bayan/core/widgets/pulsing_dot.dart';
 import 'package:bayan/core/widgets/speaking_avatar.dart';
 import 'package:bayan/core/widgets/host_control_panel.dart';
 import 'package:bayan/core/widgets/share_diwan_sheet.dart';
+import 'package:bayan/core/widgets/stage_chat_overlay.dart';
+import 'package:bayan/core/widgets/join_request_banner.dart';
 
 enum StageRole { host, speaker, listener }
 
@@ -91,6 +93,8 @@ class _DiwanStageScreenState extends State<DiwanStageScreen> {
   bool _isHandRaised = false;
   bool _showEmojis = false;
   bool _isRoomLocked = false;
+  bool _showChat = false;
+  bool _showJoinRequest = true;
 
   final _emojis = ['👏', '🔥', '❤️', '😂', '💡', '✨'];
 
@@ -160,6 +164,28 @@ class _DiwanStageScreenState extends State<DiwanStageScreen> {
           ),
           _buildControlBar(context),
           if (_showEmojis) _buildEmojiTray(),
+          if (widget.currentUserRole == StageRole.host && _showJoinRequest)
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: JoinRequestBanner(
+                requesterName: 'محمد الراشد',
+                requesterInitial: 'م',
+                onAccept: () => HapticFeedback.mediumImpact(),
+                onDecline: () => HapticFeedback.selectionClick(),
+                onDismiss: () => setState(() => _showJoinRequest = false),
+              ),
+            ),
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: StageChatOverlay(
+              isVisible: _showChat,
+              onToggle: () => setState(() => _showChat = false),
+            ),
+          ),
         ],
       ),
     );
@@ -484,6 +510,19 @@ class _DiwanStageScreenState extends State<DiwanStageScreen> {
                       setState(() => _isHandRaised = !_isHandRaised);
                     },
                   ),
+                _ControlButton(
+                  icon: Icons.chat_rounded,
+                  label: 'محادثة',
+                  isActive: _showChat,
+                  activeColor: BayanColors.accent,
+                  onTap: () {
+                    HapticFeedback.selectionClick();
+                    setState(() {
+                      _showChat = !_showChat;
+                      if (_showChat) _showEmojis = false;
+                    });
+                  },
+                ),
                 _ControlButton(
                   icon: Icons.emoji_emotions_rounded,
                   label: 'تفاعل',

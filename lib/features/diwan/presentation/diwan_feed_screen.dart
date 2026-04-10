@@ -14,6 +14,7 @@ import 'package:bayan/core/widgets/shimmer_skeleton.dart';
 import 'package:bayan/features/diwan/presentation/diwan_detail_screen.dart';
 import 'package:bayan/features/profile/presentation/speaker_profile_screen.dart';
 import 'package:bayan/features/notifications/presentation/notification_center_screen.dart';
+import 'package:bayan/core/widgets/bayan_refresh_indicator.dart';
 
 class _DiwanData {
   final String id;
@@ -235,43 +236,50 @@ class _DiwanFeedScreenState extends ConsumerState<DiwanFeedScreen>
     return Scaffold(
       backgroundColor: BayanColors.background,
       body: SafeArea(
-        child: CustomScrollView(
-          slivers: [
-            SliverToBoxAdapter(child: _buildHeader()),
-            SliverToBoxAdapter(child: _buildLiveIndicator(diwans)),
-            SliverToBoxAdapter(child: _buildTopVoices()),
-            SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              sliver: SliverList(
-                delegate: SliverChildBuilderDelegate((context, index) {
-                  final interval = _staggerInterval(index);
-                  return AnimatedBuilder(
-                    animation: _staggerController,
-                    builder: (context, child) {
-                      final value = interval.transform(
-                        _staggerController.value.clamp(0.0, 1.0),
-                      );
-                      return Opacity(
-                        opacity: value,
-                        child: Transform.translate(
-                          offset: Offset(0, 30 * (1 - value)),
-                          child: child,
+        child: BayanRefreshIndicator(
+          onRefresh: () async {
+            HapticFeedback.mediumImpact();
+            ref.invalidate(diwanNotifierProvider);
+            await Future.delayed(const Duration(milliseconds: 800));
+          },
+          child: CustomScrollView(
+            slivers: [
+              SliverToBoxAdapter(child: _buildHeader()),
+              SliverToBoxAdapter(child: _buildLiveIndicator(diwans)),
+              SliverToBoxAdapter(child: _buildTopVoices()),
+              SliverPadding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                sliver: SliverList(
+                  delegate: SliverChildBuilderDelegate((context, index) {
+                    final interval = _staggerInterval(index);
+                    return AnimatedBuilder(
+                      animation: _staggerController,
+                      builder: (context, child) {
+                        final value = interval.transform(
+                          _staggerController.value.clamp(0.0, 1.0),
+                        );
+                        return Opacity(
+                          opacity: value,
+                          child: Transform.translate(
+                            offset: Offset(0, 30 * (1 - value)),
+                            child: child,
+                          ),
+                        );
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: _DiwanCard(
+                          diwan: diwans[index],
+                          onTap: () => _openDiwan(diwans[index]),
                         ),
-                      );
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 16),
-                      child: _DiwanCard(
-                        diwan: diwans[index],
-                        onTap: () => _openDiwan(diwans[index]),
                       ),
-                    ),
-                  );
-                }, childCount: diwans.length),
+                    );
+                  }, childCount: diwans.length),
+                ),
               ),
-            ),
-            const SliverToBoxAdapter(child: SizedBox(height: 100)),
-          ],
+              const SliverToBoxAdapter(child: SizedBox(height: 100)),
+            ],
+          ),
         ),
       ),
     );

@@ -9,6 +9,7 @@ import 'package:bayan/core/repositories/moderation_repository.dart';
 import 'package:bayan/core/repositories/search_repository.dart';
 import 'package:bayan/core/repositories/social_repository.dart';
 import 'package:bayan/core/repositories/tag_repository.dart';
+import 'package:bayan/core/repositories/analytics_repository.dart';
 import 'package:bayan/core/repositories/voice_repository.dart';
 
 final supabaseClientProvider = Provider<SupabaseClient>(
@@ -53,4 +54,8 @@ final moderationRepositoryProvider = Provider<ModerationRepository>(
 
 final searchRepositoryProvider = Provider<SearchRepository>(
   (ref) => SearchRepository(ref.read(supabaseClientProvider)),
+);
+
+final analyticsRepositoryProvider = Provider<AnalyticsRepository>(
+  (ref) => AnalyticsRepository(ref.read(supabaseClientProvider)),
 );
