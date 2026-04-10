@@ -226,19 +226,13 @@ class _ShareStorySheet extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Container(
-                      width: 20,
-                      height: 20,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        gradient: const LinearGradient(
-                          colors: [BayanColors.accent, Color(0xFFD4AF37)],
-                        ),
-                      ),
-                      child: const Icon(
-                        Icons.auto_awesome_rounded,
-                        size: 10,
-                        color: BayanColors.background,
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(5),
+                      child: Image.asset(
+                        'assets/Bayan.JPG',
+                        width: 20,
+                        height: 20,
+                        fit: BoxFit.cover,
                       ),
                     ),
                     const SizedBox(width: 6),

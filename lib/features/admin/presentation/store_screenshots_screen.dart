@@ -390,22 +390,13 @@ class _StoreScreenshotsScreenState extends State<StoreScreenshotsScreen>
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Container(
-                                width: 16,
-                                height: 16,
-                                decoration: const BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      BayanColors.accent,
-                                      Color(0xFFD4AF37),
-                                    ],
-                                  ),
-                                ),
-                                child: const Icon(
-                                  Icons.auto_awesome_rounded,
-                                  size: 9,
-                                  color: BayanColors.background,
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(4),
+                                child: Image.asset(
+                                  'assets/Bayan.JPG',
+                                  width: 16,
+                                  height: 16,
+                                  fit: BoxFit.cover,
                                 ),
                               ),
                               const SizedBox(width: 5),

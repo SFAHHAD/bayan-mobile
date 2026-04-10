@@ -254,19 +254,13 @@ class _ViralShareSheetState extends State<_ViralShareSheet>
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Container(
-                      width: 18,
-                      height: 18,
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        gradient: LinearGradient(
-                          colors: [BayanColors.accent, Color(0xFFD4AF37)],
-                        ),
-                      ),
-                      child: const Icon(
-                        Icons.auto_awesome_rounded,
-                        size: 10,
-                        color: BayanColors.background,
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(5),
+                      child: Image.asset(
+                        'assets/Bayan.JPG',
+                        width: 18,
+                        height: 18,
+                        fit: BoxFit.cover,
                       ),
                     ),
                     const SizedBox(width: 6),
