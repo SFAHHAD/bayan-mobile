@@ -23,7 +23,11 @@ import 'package:bayan/core/repositories/recommendation_repository.dart';
 import 'package:bayan/core/repositories/activity_log_repository.dart';
 import 'package:bayan/core/repositories/log_repository.dart';
 import 'package:bayan/core/repositories/config_repository.dart';
+import 'package:bayan/core/repositories/loyalty_repository.dart';
+import 'package:bayan/core/repositories/semantic_search_repository.dart';
+import 'package:bayan/core/repositories/subscription_repository.dart';
 import 'package:bayan/core/services/crash_recovery_service.dart';
+import 'package:bayan/core/services/prefetch_service.dart';
 
 final supabaseClientProvider = Provider<SupabaseClient>(
   (ref) => Supabase.instance.client,
@@ -126,4 +130,20 @@ final crashRecoveryServiceProvider = Provider<CrashRecoveryService>(
     ref.read(logRepositoryProvider),
     ref.read(supabaseClientProvider),
   ),
+);
+
+final loyaltyRepositoryProvider = Provider<LoyaltyRepository>(
+  (ref) => LoyaltyRepository(ref.read(supabaseClientProvider)),
+);
+
+final semanticSearchRepositoryProvider = Provider<SemanticSearchRepository>(
+  (ref) => SemanticSearchRepository(ref.read(supabaseClientProvider)),
+);
+
+final subscriptionRepositoryProvider = Provider<SubscriptionRepository>(
+  (ref) => SubscriptionRepository(ref.read(supabaseClientProvider)),
+);
+
+final prefetchServiceProvider = Provider<PrefetchService>(
+  (ref) => PrefetchService(ref.read(recommendationRepositoryProvider)),
 );

@@ -270,6 +270,7 @@ class _SearchScreenState extends State<SearchScreen>
             SliverToBoxAdapter(child: _buildHeader()),
             SliverToBoxAdapter(child: _buildSearchBar()),
             if (!_hasQuery) ...[
+              SliverToBoxAdapter(child: _buildSmartSuggestion()),
               SliverToBoxAdapter(child: _buildFeaturedHero()),
               SliverToBoxAdapter(child: _buildCategoriesGrid()),
               SliverToBoxAdapter(child: _buildTrendingDiwans()),
@@ -781,6 +782,105 @@ class _SearchScreenState extends State<SearchScreen>
     );
   }
 
+  Widget _buildSmartSuggestion() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+      child: HapticButton(
+        hapticType: HapticFeedbackType.selection,
+        onTap: () => HapticFeedback.selectionClick(),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(18),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(18),
+                gradient: LinearGradient(
+                  begin: Alignment.topRight,
+                  end: Alignment.bottomLeft,
+                  colors: [
+                    const Color(0xFF6C3FA0).withValues(alpha: 0.12),
+                    BayanColors.glassBackground,
+                  ],
+                ),
+                border: Border.all(
+                  color: const Color(0xFF6C3FA0).withValues(alpha: 0.2),
+                ),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: LinearGradient(
+                        colors: [
+                          BayanColors.accent.withValues(alpha: 0.15),
+                          const Color(0xFF6C3FA0).withValues(alpha: 0.15),
+                        ],
+                      ),
+                    ),
+                    child: const Icon(
+                      Icons.auto_awesome_rounded,
+                      color: BayanColors.accent,
+                      size: 20,
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'بناءً على اهتماماتك العميقة',
+                          style: GoogleFonts.cairo(
+                            fontSize: 11,
+                            color: BayanColors.accent,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          'ننصحك بمجلس الشعر الحديث مع عبدالله المطيري',
+                          style: GoogleFonts.cairo(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w700,
+                            color: BayanColors.textPrimary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: BayanColors.accent,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      'ادخل',
+                      style: GoogleFonts.cairo(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        color: BayanColors.background,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildSearchResults() {
     final query = _searchController.text;
     final allResults = [
@@ -824,75 +924,119 @@ class _SearchScreenState extends State<SearchScreen>
       );
     }
 
+    final matchPercentages = [92, 87, 74, 68, 55];
+
     return Column(
-      children: allResults.map((d) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-          child: HapticButton(
-            hapticType: HapticFeedbackType.light,
-            onTap: () {},
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(18),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-                child: Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: BayanColors.glassBackground,
-                    borderRadius: BorderRadius.circular(18),
-                    border: Border.all(color: BayanColors.glassBorder),
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 44,
-                        height: 44,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(14),
-                          color: BayanColors.accent.withValues(alpha: 0.12),
+      children: [
+        ...allResults.asMap().entries.map((entry) {
+          final i = entry.key;
+          final d = entry.value;
+          final matchPct = i < matchPercentages.length
+              ? matchPercentages[i]
+              : 50 + (d.listeners % 40);
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+            child: HapticButton(
+              hapticType: HapticFeedbackType.light,
+              onTap: () {},
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(18),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+                  child: Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: BayanColors.glassBackground,
+                      borderRadius: BorderRadius.circular(18),
+                      border: Border.all(color: BayanColors.glassBorder),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 44,
+                          height: 44,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(14),
+                            color: BayanColors.accent.withValues(alpha: 0.12),
+                          ),
+                          child: const Icon(
+                            Icons.groups_rounded,
+                            color: BayanColors.accent,
+                            size: 22,
+                          ),
                         ),
-                        child: const Icon(
-                          Icons.groups_rounded,
-                          color: BayanColors.accent,
-                          size: 22,
-                        ),
-                      ),
-                      const SizedBox(width: 14),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              d.name,
-                              style: GoogleFonts.cairo(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w700,
-                                color: BayanColors.textPrimary,
+                        const SizedBox(width: 14),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                d.name,
+                                style: GoogleFonts.cairo(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w700,
+                                  color: BayanColors.textPrimary,
+                                ),
                               ),
-                            ),
-                            Text(
-                              '${d.host} · ${d.listeners} مستمع',
-                              style: GoogleFonts.cairo(
-                                fontSize: 12,
-                                color: BayanColors.textSecondary,
+                              Text(
+                                '${d.host} · ${d.listeners} مستمع',
+                                style: GoogleFonts.cairo(
+                                  fontSize: 12,
+                                  color: BayanColors.textSecondary,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                      const Icon(
-                        Icons.chevron_left_rounded,
-                        color: BayanColors.textSecondary,
-                        size: 22,
-                      ),
-                    ],
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            color: _matchColor(matchPct).withValues(alpha: 0.1),
+                            border: Border.all(
+                              color: _matchColor(
+                                matchPct,
+                              ).withValues(alpha: 0.3),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.auto_awesome_rounded,
+                                color: _matchColor(matchPct),
+                                size: 12,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                '$matchPct٪',
+                                style: GoogleFonts.cairo(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w700,
+                                  color: _matchColor(matchPct),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-        );
-      }).toList(),
+          );
+        }),
+      ],
     );
+  }
+
+  Color _matchColor(int pct) {
+    if (pct >= 85) return BayanColors.accent;
+    if (pct >= 65) return const Color(0xFFD4AF37);
+    return BayanColors.textSecondary;
   }
 }

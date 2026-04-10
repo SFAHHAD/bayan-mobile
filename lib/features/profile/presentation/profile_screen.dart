@@ -17,6 +17,10 @@ import 'package:bayan/features/verification/presentation/verification_screen.dar
 import 'package:bayan/core/widgets/premium_ticket.dart';
 import 'package:bayan/features/creator/presentation/creator_studio_screen.dart';
 import 'package:bayan/core/widgets/live_event_banner.dart';
+import 'package:bayan/features/settings/presentation/settings_center_screen.dart';
+import 'package:bayan/core/widgets/loyalty_dashboard.dart';
+import 'package:bayan/core/widgets/voice_print.dart';
+import 'package:bayan/features/subscription/presentation/sovereign_club_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -216,7 +220,7 @@ class _ProfileScreenState extends State<ProfileScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this);
+    _tabController = TabController(length: 5, vsync: this);
     Future.delayed(const Duration(milliseconds: 900), () {
       if (mounted) setState(() => _isLoading = false);
     });
@@ -256,12 +260,99 @@ class _ProfileScreenState extends State<ProfileScreen>
             controller: _tabController,
             children: [
               _buildVoiceGalleryTab(),
+              _buildProgressionSection(),
               const InsightsTab(),
               const WalletTab(),
               _buildAboutTab(),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildProgressionSection() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 120),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const LoyaltyDashboard(),
+          const SizedBox(height: 24),
+          HapticButton(
+            hapticType: HapticFeedbackType.medium,
+            onTap: () {
+              HapticFeedback.mediumImpact();
+              Navigator.of(context).push(
+                PageRouteBuilder(
+                  pageBuilder: (context, a, b) => const SovereignClubScreen(),
+                  transitionDuration: const Duration(milliseconds: 400),
+                  transitionsBuilder: (context, animation, _, child) {
+                    return FadeTransition(opacity: animation, child: child);
+                  },
+                ),
+              );
+            },
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(18),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(18),
+                    gradient: LinearGradient(
+                      colors: [
+                        const Color(0xFFD4AF37).withValues(alpha: 0.12),
+                        BayanColors.glassBackground,
+                      ],
+                    ),
+                    border: Border.all(
+                      color: const Color(0xFFD4AF37).withValues(alpha: 0.25),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.workspace_premium_rounded,
+                        color: Color(0xFFD4AF37),
+                        size: 22,
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'نادي السيادة',
+                              style: GoogleFonts.cairo(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w700,
+                                color: const Color(0xFFD4AF37),
+                              ),
+                            ),
+                            Text(
+                              'ارتقِ بتجربتك إلى مستوى النخبة',
+                              style: GoogleFonts.cairo(
+                                fontSize: 11,
+                                color: BayanColors.textSecondary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Icon(
+                        Icons.chevron_left_rounded,
+                        color: Color(0xFFD4AF37),
+                        size: 22,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -462,6 +553,7 @@ class _ProfileScreenState extends State<ProfileScreen>
           ),
           tabs: const [
             Tab(text: 'الأصوات'),
+            Tab(text: 'التقدم'),
             Tab(text: 'الإحصائيات'),
             Tab(text: 'المحفظة'),
             Tab(text: 'الإعدادات'),
@@ -473,18 +565,75 @@ class _ProfileScreenState extends State<ProfileScreen>
   }
 
   Widget _buildVoiceGalleryTab() {
-    return GridView.builder(
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 120),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 12,
-        mainAxisSpacing: 12,
-        childAspectRatio: 0.92,
-      ),
-      itemCount: _voiceGallery.length,
-      itemBuilder: (context, index) {
-        return _VoiceGalleryCard(data: _voiceGallery[index]);
-      },
+    return CustomScrollView(
+      slivers: [
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+            child: VoicePrint(
+              amplitudes: [
+                0.4,
+                0.7,
+                0.5,
+                0.9,
+                0.3,
+                0.6,
+                0.8,
+                0.5,
+                0.7,
+                0.4,
+                0.6,
+                0.3,
+                0.8,
+                0.5,
+                0.9,
+                0.4,
+                0.7,
+                0.3,
+                0.6,
+                0.8,
+                0.5,
+                0.7,
+                0.4,
+                0.6,
+                0.9,
+                0.3,
+                0.8,
+                0.5,
+                0.7,
+                0.4,
+                0.6,
+                0.3,
+                0.8,
+                0.5,
+                0.9,
+                0.7,
+                0.4,
+                0.6,
+                0.3,
+                0.8,
+              ],
+              height: 100,
+            ),
+          ),
+        ),
+        const SliverToBoxAdapter(child: SizedBox(height: 16)),
+        SliverPadding(
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, 120),
+          sliver: SliverGrid(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 12,
+              childAspectRatio: 0.92,
+            ),
+            delegate: SliverChildBuilderDelegate(
+              (context, index) => _VoiceGalleryCard(data: _voiceGallery[index]),
+              childCount: _voiceGallery.length,
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -494,6 +643,11 @@ class _ProfileScreenState extends State<ProfileScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          _buildSettingsGroupTitle(
+            'الحساب',
+            Icons.person_rounded,
+            BayanColors.accent,
+          ),
           GlassmorphicContainer(
             borderRadius: 20,
             padding: EdgeInsets.zero,
@@ -506,19 +660,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                   showDivider: true,
                   onTap: () {
                     HapticFeedback.mediumImpact();
-                    Navigator.of(context).push(
-                      PageRouteBuilder(
-                        pageBuilder: (context, a, b) =>
-                            const CreatorStudioScreen(),
-                        transitionDuration: const Duration(milliseconds: 400),
-                        transitionsBuilder: (context, animation, _, child) {
-                          return FadeTransition(
-                            opacity: animation,
-                            child: child,
-                          );
-                        },
-                      ),
-                    );
+                    _pushSettingsScreen(const CreatorStudioScreen());
                   },
                 ),
                 _SettingsTile(
@@ -527,43 +669,10 @@ class _ProfileScreenState extends State<ProfileScreen>
                   showDivider: true,
                 ),
                 _SettingsTile(
-                  icon: Icons.notifications_none_rounded,
-                  label: 'الإشعارات',
-                  showDivider: true,
-                ),
-                _SettingsTile(
-                  icon: Icons.history_rounded,
-                  label: 'سجل النشاط',
-                  showDivider: true,
-                  onTap: () => showActivityHistory(context),
-                ),
-                _SettingsTile(
-                  icon: Icons.verified_rounded,
-                  label: 'طلب التوثيق',
-                  iconColor: const Color(0xFF2A6F97),
-                  showDivider: true,
-                  onTap: () {
-                    HapticFeedback.selectionClick();
-                    Navigator.of(context).push(
-                      PageRouteBuilder(
-                        pageBuilder: (context, a, b) =>
-                            const VerificationScreen(),
-                        transitionDuration: const Duration(milliseconds: 400),
-                        transitionsBuilder: (context, animation, _, child) {
-                          return FadeTransition(
-                            opacity: animation,
-                            child: child,
-                          );
-                        },
-                      ),
-                    );
-                  },
-                ),
-                _SettingsTile(
                   icon: Icons.confirmation_num_rounded,
                   label: 'تذاكري',
                   iconColor: BayanColors.accent,
-                  showDivider: true,
+                  showDivider: false,
                   onTap: () {
                     HapticFeedback.selectionClick();
                     showModalBottomSheet(
@@ -574,33 +683,44 @@ class _ProfileScreenState extends State<ProfileScreen>
                     );
                   },
                 ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 8),
+          _buildSettingsGroupTitle(
+            'الخصوصية والأمان',
+            Icons.shield_rounded,
+            const Color(0xFF6C3FA0),
+          ),
+          GlassmorphicContainer(
+            borderRadius: 20,
+            padding: EdgeInsets.zero,
+            child: Column(
+              children: [
                 _SettingsTile(
                   icon: Icons.lock_outline_rounded,
-                  label: 'الخصوصية والأمان',
+                  label: 'الخصوصية',
                   showDivider: true,
                 ),
                 _SettingsTile(
-                  icon: Icons.workspace_premium_rounded,
-                  label: 'ادعُ النخبة',
-                  iconColor: const Color(0xFFD4AF37),
-                  showDivider: true,
-                  onTap: () {
-                    HapticFeedback.selectionClick();
-                    Navigator.of(context).push(
-                      PageRouteBuilder(
-                        pageBuilder: (context, a, b) =>
-                            const ReferralHubScreen(),
-                        transitionDuration: const Duration(milliseconds: 400),
-                        transitionsBuilder: (context, animation, _, child) {
-                          return FadeTransition(
-                            opacity: animation,
-                            child: child,
-                          );
-                        },
-                      ),
-                    );
-                  },
+                  icon: Icons.notifications_none_rounded,
+                  label: 'الإشعارات',
+                  showDivider: false,
                 ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 8),
+          _buildSettingsGroupTitle(
+            'المظهر والشمولية',
+            Icons.palette_rounded,
+            const Color(0xFFD4AF37),
+          ),
+          GlassmorphicContainer(
+            borderRadius: 20,
+            padding: EdgeInsets.zero,
+            child: Column(
+              children: [
                 _SettingsTile(
                   icon: Icons.language_rounded,
                   label: 'اللغة',
@@ -613,6 +733,56 @@ class _ProfileScreenState extends State<ProfileScreen>
                     ),
                   ),
                   showDivider: true,
+                ),
+                _SettingsTile(
+                  icon: Icons.accessibility_new_rounded,
+                  label: 'إمكانية الوصول',
+                  iconColor: BayanColors.accent,
+                  showDivider: false,
+                  onTap: () {
+                    HapticFeedback.selectionClick();
+                    _pushSettingsScreen(const SettingsCenterScreen());
+                  },
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 8),
+          _buildSettingsGroupTitle(
+            'المزيد',
+            Icons.more_horiz_rounded,
+            BayanColors.textSecondary,
+          ),
+          GlassmorphicContainer(
+            borderRadius: 20,
+            padding: EdgeInsets.zero,
+            child: Column(
+              children: [
+                _SettingsTile(
+                  icon: Icons.verified_rounded,
+                  label: 'طلب التوثيق',
+                  iconColor: const Color(0xFF2A6F97),
+                  showDivider: true,
+                  onTap: () {
+                    HapticFeedback.selectionClick();
+                    _pushSettingsScreen(const VerificationScreen());
+                  },
+                ),
+                _SettingsTile(
+                  icon: Icons.workspace_premium_rounded,
+                  label: 'ادعُ النخبة',
+                  iconColor: const Color(0xFFD4AF37),
+                  showDivider: true,
+                  onTap: () {
+                    HapticFeedback.selectionClick();
+                    _pushSettingsScreen(const ReferralHubScreen());
+                  },
+                ),
+                _SettingsTile(
+                  icon: Icons.history_rounded,
+                  label: 'سجل النشاط',
+                  showDivider: true,
+                  onTap: () => showActivityHistory(context),
                 ),
                 _SettingsTile(
                   icon: Icons.info_outline_rounded,
@@ -645,6 +815,38 @@ class _ProfileScreenState extends State<ProfileScreen>
                   ),
                 ),
               ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _pushSettingsScreen(Widget screen) {
+    Navigator.of(context).push(
+      PageRouteBuilder(
+        pageBuilder: (context, a, b) => screen,
+        transitionDuration: const Duration(milliseconds: 400),
+        transitionsBuilder: (context, animation, _, child) {
+          return FadeTransition(opacity: animation, child: child);
+        },
+      ),
+    );
+  }
+
+  Widget _buildSettingsGroupTitle(String title, IconData icon, Color color) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 4, top: 16, bottom: 10),
+      child: Row(
+        children: [
+          Icon(icon, color: color, size: 16),
+          const SizedBox(width: 8),
+          Text(
+            title,
+            style: GoogleFonts.cairo(
+              fontSize: 13,
+              fontWeight: FontWeight.w700,
+              color: color,
             ),
           ),
         ],

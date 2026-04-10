@@ -18,6 +18,7 @@ import 'package:bayan/core/widgets/audio_settings_panel.dart';
 import 'package:bayan/core/widgets/engagement_effects.dart';
 import 'package:bayan/core/widgets/spotlight_overlay.dart';
 import 'package:bayan/core/widgets/spatial_avatar.dart';
+import 'package:bayan/core/widgets/live_soundboard.dart';
 
 enum StageRole { host, speaker, listener }
 
@@ -667,6 +668,14 @@ class _DiwanStageScreenState extends State<DiwanStageScreen> {
                     },
                   ),
                 ),
+                if (isHostOrSpeaker)
+                  _ControlButton(
+                    icon: Icons.surround_sound_rounded,
+                    label: 'مؤثرات',
+                    isActive: false,
+                    activeColor: const Color(0xFF6C3FA0),
+                    onTap: () => showSoundboard(context),
+                  ),
                 if (widget.currentUserRole == StageRole.host) ...[
                   _ControlButton(
                     icon: Icons.poll_rounded,

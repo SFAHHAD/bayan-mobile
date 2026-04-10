@@ -192,6 +192,123 @@ class ProfileSkeleton extends StatelessWidget {
   }
 }
 
+class SeriesSkeleton extends StatelessWidget {
+  const SeriesSkeleton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: BayanColors.surface,
+      highlightColor: BayanColors.surface.withValues(alpha: 0.3),
+      period: const Duration(milliseconds: 1800),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 20),
+            const ShimmerBox(width: 140, height: 24, borderRadius: 10),
+            const SizedBox(height: 16),
+            SizedBox(
+              height: 180,
+              child: Row(
+                children: List.generate(
+                  3,
+                  (i) => Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.only(left: i > 0 ? 10 : 0),
+                      child: const ShimmerBox(
+                        width: double.infinity,
+                        height: 180,
+                        borderRadius: 22,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+            const ShimmerBox(width: 120, height: 20, borderRadius: 8),
+            const SizedBox(height: 12),
+            ...List.generate(
+              3,
+              (_) => const Padding(
+                padding: EdgeInsets.only(bottom: 10),
+                child: ShimmerBox(
+                  width: double.infinity,
+                  height: 72,
+                  borderRadius: 18,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class InsightsSkeleton extends StatelessWidget {
+  const InsightsSkeleton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: BayanColors.surface,
+      highlightColor: BayanColors.surface.withValues(alpha: 0.3),
+      period: const Duration(milliseconds: 1800),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 20),
+            Row(
+              children: List.generate(
+                3,
+                (i) => Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.only(left: i > 0 ? 10 : 0),
+                    child: const ShimmerBox(
+                      width: double.infinity,
+                      height: 90,
+                      borderRadius: 18,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+            const ShimmerBox(
+              width: double.infinity,
+              height: 220,
+              borderRadius: 22,
+            ),
+            const SizedBox(height: 16),
+            const ShimmerBox(
+              width: double.infinity,
+              height: 180,
+              borderRadius: 22,
+            ),
+            const SizedBox(height: 16),
+            const ShimmerBox(width: 100, height: 18, borderRadius: 8),
+            const SizedBox(height: 10),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: List.generate(
+                4,
+                (_) =>
+                    const ShimmerBox(width: 80, height: 36, borderRadius: 18),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class SearchSkeleton extends StatelessWidget {
   const SearchSkeleton({super.key});
 
