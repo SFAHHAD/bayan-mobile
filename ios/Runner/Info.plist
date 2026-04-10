@@ -79,6 +79,30 @@
 			</array>
 		</dict>
 	</array>
+	<key>CFBundleIcons</key>
+	<dict>
+		<key>CFBundlePrimaryIcon</key>
+		<dict>
+			<key>CFBundleIconFiles</key>
+			<array>
+				<string>AppIcon</string>
+			</array>
+			<key>UIPrerenderedIcon</key>
+			<false/>
+		</dict>
+		<key>CFBundleAlternateIcons</key>
+		<dict>
+			<key>BayanGold</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>BayanGold</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<false/>
+			</dict>
+		</dict>
+	</dict>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>\u0628\u064a\u0627\u0646 يحتاج إلى الميكروفون للمشاركة في الديوانيّات الصوتية</string>
 	<key>NSCameraUsageDescription</key>

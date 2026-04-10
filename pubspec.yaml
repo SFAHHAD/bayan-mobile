@@ -1,7 +1,7 @@
 name: bayan
 description: "Bayan - Premium Arabic Content Platform"
 publish_to: 'none'
-version: 2.0.0+10
+version: 2.1.0+11
 
 environment:
   sdk: ^3.11.1
@@ -23,6 +23,7 @@ dependencies:
   cryptography: ^2.7.0
   intl: ^0.20.2
   pdf: ^3.10.8
+  flutter_dynamic_icon: ^2.1.0
 
 dev_dependencies:
   flutter_test:
@@ -50,3 +51,6 @@ flutter:
   uses-material-design: true
   assets:
     - assets/Bayan.JPG
+    - assets/icon_gold_edition.png
+    - assets/icon_platinum_edition.png
+    - assets/icon_classic_edition.png

@@ -6,6 +6,8 @@ class Profile {
   final String? avatarUrl;
   final bool isFounder;
   final bool isVerified;
+  final bool isSovereign;
+  final int level;
   final String? professionalTitle;
   final String? verifiedCategory;
   final int followerCount;
@@ -21,6 +23,8 @@ class Profile {
     this.avatarUrl,
     this.isFounder = false,
     this.isVerified = false,
+    this.isSovereign = false,
+    this.level = 0,
     this.professionalTitle,
     this.verifiedCategory,
     this.followerCount = 0,
@@ -38,6 +42,8 @@ class Profile {
       avatarUrl: map['avatar_url'] as String?,
       isFounder: (map['is_founder'] as bool?) ?? false,
       isVerified: (map['is_verified'] as bool?) ?? false,
+      isSovereign: (map['is_sovereign'] as bool?) ?? false,
+      level: (map['level'] as int?) ?? 0,
       professionalTitle: map['professional_title'] as String?,
       verifiedCategory: map['verified_category'] as String?,
       followerCount: (map['follower_count'] as int?) ?? 0,
@@ -64,6 +70,8 @@ class Profile {
     String? avatarUrl,
     bool? isFounder,
     bool? isVerified,
+    bool? isSovereign,
+    int? level,
     String? professionalTitle,
     String? verifiedCategory,
     int? followerCount,
@@ -79,6 +87,8 @@ class Profile {
       avatarUrl: avatarUrl ?? this.avatarUrl,
       isFounder: isFounder ?? this.isFounder,
       isVerified: isVerified ?? this.isVerified,
+      isSovereign: isSovereign ?? this.isSovereign,
+      level: level ?? this.level,
       professionalTitle: professionalTitle ?? this.professionalTitle,
       verifiedCategory: verifiedCategory ?? this.verifiedCategory,
       followerCount: followerCount ?? this.followerCount,

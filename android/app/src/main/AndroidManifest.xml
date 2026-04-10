@@ -27,10 +27,6 @@
               android:name="io.flutter.embedding.android.NormalTheme"
               android:resource="@style/NormalTheme"
               />
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
             <!-- Deep links: bayan://diwan/{id}  bayan://profile/{id} -->
             <intent-filter android:autoVerify="false">
                 <action android:name="android.intent.action.VIEW"/>
@@ -39,6 +35,40 @@
                 <data android:scheme="bayan"/>
             </intent-filter>
         </activity>
+
+        <!-- ═══════════════════════════════════════════════════════════════
+             Dynamic Icon: Default variant (enabled by default)
+             Name MUST match AppIconVariant.androidActivityAlias
+        ════════════════════════════════════════════════════════════════ -->
+        <activity-alias
+            android:name=".MainActivityDefaultIcon"
+            android:icon="@mipmap/ic_launcher"
+            android:label="بيان"
+            android:targetActivity=".MainActivity"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity-alias>
+
+        <!-- ═══════════════════════════════════════════════════════════════
+             Dynamic Icon: Gold variant (disabled until Sovereign unlocks it)
+             Name MUST match AppIconVariant.androidActivityAlias
+        ════════════════════════════════════════════════════════════════ -->
+        <activity-alias
+            android:name=".MainActivityGoldIcon"
+            android:icon="@mipmap/ic_launcher_gold"
+            android:label="بيان"
+            android:targetActivity=".MainActivity"
+            android:enabled="false"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity-alias>
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data

@@ -11,6 +11,7 @@ class ProfileRepository implements BaseRepository<Profile> {
 
   static const _fullSelect =
       'id, username, display_name, bio, avatar_url, is_founder, '
+      'is_verified, is_sovereign, level, professional_title, verified_category, '
       'follower_count, following_count, voice_count, created_at';
 
   @override
