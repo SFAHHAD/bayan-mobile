@@ -5,6 +5,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:bayan/core/theme/theme.dart';
 import 'package:bayan/core/widgets/glassmorphic_container.dart';
 import 'package:bayan/core/widgets/haptic_button.dart';
+import 'package:bayan/core/widgets/app_icon_selector.dart';
+import 'package:bayan/features/governance/presentation/governance_screen.dart';
+import 'package:bayan/features/subscription/presentation/subscription_management_screen.dart';
 
 class _PlanFeature {
   final String label;
@@ -49,6 +52,7 @@ class SovereignClubScreen extends StatelessWidget {
                 SliverToBoxAdapter(child: _buildComparisonTable()),
                 SliverToBoxAdapter(child: _buildPricingCards()),
                 SliverToBoxAdapter(child: _buildCta(context)),
+                SliverToBoxAdapter(child: _buildMemberActions(context)),
                 const SliverToBoxAdapter(child: SizedBox(height: 100)),
               ],
             ),
@@ -487,6 +491,153 @@ class SovereignClubScreen extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildMemberActions(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 24, 20, 0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(right: 4, bottom: 12),
+            child: Text(
+              'إدارة العضوية',
+              style: GoogleFonts.cairo(
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                color: BayanColors.textPrimary,
+              ),
+            ),
+          ),
+          _MemberActionTile(
+            icon: Icons.account_balance_rounded,
+            label: 'قاعة الشورى',
+            subtitle: 'شارك في حوكمة المجتمع',
+            color: const Color(0xFF6C3FA0),
+            onTap: () {
+              HapticFeedback.mediumImpact();
+              Navigator.of(context).push(
+                PageRouteBuilder(
+                  pageBuilder: (context, a, b) => const GovernanceScreen(),
+                  transitionDuration: const Duration(milliseconds: 400),
+                  transitionsBuilder: (context, animation, _, child) {
+                    return FadeTransition(opacity: animation, child: child);
+                  },
+                ),
+              );
+            },
+          ),
+          const SizedBox(height: 10),
+          _MemberActionTile(
+            icon: Icons.settings_rounded,
+            label: 'إدارة الاشتراك',
+            subtitle: 'تغيير الخطة، استعادة المشتريات',
+            color: BayanColors.accent,
+            onTap: () {
+              HapticFeedback.mediumImpact();
+              Navigator.of(context).push(
+                PageRouteBuilder(
+                  pageBuilder: (context, a, b) =>
+                      const SubscriptionManagementScreen(),
+                  transitionDuration: const Duration(milliseconds: 400),
+                  transitionsBuilder: (context, animation, _, child) {
+                    return FadeTransition(opacity: animation, child: child);
+                  },
+                ),
+              );
+            },
+          ),
+          const SizedBox(height: 10),
+          _MemberActionTile(
+            icon: Icons.app_settings_alt_rounded,
+            label: 'أيقونة التطبيق',
+            subtitle: 'اختر الأيقونة الذهبية أو الداكنة',
+            color: const Color(0xFFD4AF37),
+            onTap: () => showAppIconSelector(context),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _MemberActionTile extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String subtitle;
+  final Color color;
+  final VoidCallback onTap;
+
+  const _MemberActionTile({
+    required this.icon,
+    required this.label,
+    required this.subtitle,
+    required this.color,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return HapticButton(
+      hapticType: HapticFeedbackType.selection,
+      onTap: onTap,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(18),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(18),
+              color: BayanColors.glassBackground,
+              border: Border.all(color: BayanColors.glassBorder),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 42,
+                  height: 42,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: color.withValues(alpha: 0.12),
+                  ),
+                  child: Icon(icon, color: color, size: 20),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        label,
+                        style: GoogleFonts.cairo(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                          color: BayanColors.textPrimary,
+                        ),
+                      ),
+                      Text(
+                        subtitle,
+                        style: GoogleFonts.cairo(
+                          fontSize: 11,
+                          color: BayanColors.textSecondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const Icon(
+                  Icons.chevron_left_rounded,
+                  color: BayanColors.textSecondary,
+                  size: 22,
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

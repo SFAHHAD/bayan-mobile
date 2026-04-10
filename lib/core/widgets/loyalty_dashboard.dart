@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -433,10 +434,12 @@ class _LevelUpOverlay extends StatefulWidget {
 }
 
 class _LevelUpOverlayState extends State<_LevelUpOverlay>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late final AnimationController _controller;
+  late final AnimationController _particleController;
   late final Animation<double> _scale;
   late final Animation<double> _opacity;
+  late final List<_CelebrationParticle> _particles;
 
   @override
   void initState() {
@@ -445,36 +448,71 @@ class _LevelUpOverlayState extends State<_LevelUpOverlay>
       vsync: this,
       duration: const Duration(milliseconds: 800),
     );
+    _particleController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 2500),
+    );
     _scale = Tween<double>(
-      begin: 0.6,
+      begin: 0.5,
       end: 1.0,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.elasticOut));
     _opacity = Tween<double>(
       begin: 0.0,
       end: 1.0,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
+
+    final rng = math.Random();
+    _particles = List.generate(30, (i) {
+      return _CelebrationParticle(
+        x: rng.nextDouble(),
+        y: rng.nextDouble() * 0.3,
+        speed: 0.3 + rng.nextDouble() * 0.7,
+        size: 3 + rng.nextDouble() * 5,
+        color: [
+          BayanColors.accent,
+          const Color(0xFFD4AF37),
+          const Color(0xFF6C3FA0),
+          BayanColors.accentLight,
+        ][i % 4],
+      );
+    });
+
     _controller.forward();
+    _particleController.repeat();
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    _particleController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: _controller,
+      animation: Listenable.merge([_controller, _particleController]),
       builder: (context, _) {
-        return Opacity(
-          opacity: _opacity.value,
-          child: Center(
-            child: Transform.scale(
-              scale: _scale.value,
-              child: _buildCard(context),
+        return Stack(
+          children: [
+            Positioned.fill(
+              child: CustomPaint(
+                painter: _CelebrationPainter(
+                  particles: _particles,
+                  progress: _particleController.value,
+                ),
+              ),
             ),
-          ),
+            Opacity(
+              opacity: _opacity.value,
+              child: Center(
+                child: Transform.scale(
+                  scale: _scale.value,
+                  child: _buildCard(context),
+                ),
+              ),
+            ),
+          ],
         );
       },
     );
@@ -496,8 +534,8 @@ class _LevelUpOverlayState extends State<_LevelUpOverlay>
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFFD4AF37).withValues(alpha: 0.2),
-            blurRadius: 40,
+            color: const Color(0xFFD4AF37).withValues(alpha: 0.25),
+            blurRadius: 48,
             spreadRadius: -5,
           ),
         ],
@@ -506,8 +544,8 @@ class _LevelUpOverlayState extends State<_LevelUpOverlay>
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: 72,
-            height: 72,
+            width: 80,
+            height: 80,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               gradient: const LinearGradient(
@@ -515,8 +553,8 @@ class _LevelUpOverlayState extends State<_LevelUpOverlay>
               ),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFFD4AF37).withValues(alpha: 0.4),
-                  blurRadius: 24,
+                  color: const Color(0xFFD4AF37).withValues(alpha: 0.5),
+                  blurRadius: 28,
                 ),
               ],
             ),
@@ -524,7 +562,7 @@ class _LevelUpOverlayState extends State<_LevelUpOverlay>
               child: Text(
                 '${widget.level}',
                 style: GoogleFonts.cairo(
-                  fontSize: 28,
+                  fontSize: 30,
                   fontWeight: FontWeight.w800,
                   color: BayanColors.background,
                 ),
@@ -535,7 +573,7 @@ class _LevelUpOverlayState extends State<_LevelUpOverlay>
           Text(
             '🎉 ترقية!',
             style: GoogleFonts.cairo(
-              fontSize: 14,
+              fontSize: 15,
               color: const Color(0xFFD4AF37),
             ),
           ),
@@ -543,7 +581,7 @@ class _LevelUpOverlayState extends State<_LevelUpOverlay>
           Text(
             'المستوى ${widget.level}',
             style: GoogleFonts.cairo(
-              fontSize: 28,
+              fontSize: 30,
               fontWeight: FontWeight.w800,
               color: BayanColors.textPrimary,
             ),
@@ -572,6 +610,13 @@ class _LevelUpOverlayState extends State<_LevelUpOverlay>
                   colors: [BayanColors.accent, Color(0xFFD4AF37)],
                 ),
                 borderRadius: BorderRadius.circular(14),
+                boxShadow: [
+                  BoxShadow(
+                    color: BayanColors.accent.withValues(alpha: 0.3),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
               ),
               child: Center(
                 child: Text(
@@ -589,4 +634,52 @@ class _LevelUpOverlayState extends State<_LevelUpOverlay>
       ),
     );
   }
+}
+
+class _CelebrationParticle {
+  final double x;
+  final double y;
+  final double speed;
+  final double size;
+  final Color color;
+
+  const _CelebrationParticle({
+    required this.x,
+    required this.y,
+    required this.speed,
+    required this.size,
+    required this.color,
+  });
+}
+
+class _CelebrationPainter extends CustomPainter {
+  final List<_CelebrationParticle> particles;
+  final double progress;
+
+  _CelebrationPainter({required this.particles, required this.progress});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    for (final p in particles) {
+      final t = (progress * p.speed + p.y) % 1.0;
+      final x = p.x * size.width;
+      final y = t * size.height;
+      final opacity = (1.0 - t).clamp(0.0, 0.8);
+
+      final paint = Paint()
+        ..color = p.color.withValues(alpha: opacity)
+        ..style = PaintingStyle.fill;
+
+      canvas.drawCircle(Offset(x, y), p.size * (1.0 - t * 0.5), paint);
+
+      final glowPaint = Paint()
+        ..color = p.color.withValues(alpha: opacity * 0.3)
+        ..style = PaintingStyle.fill;
+      canvas.drawCircle(Offset(x, y), p.size * 2 * (1.0 - t * 0.5), glowPaint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _CelebrationPainter oldDelegate) =>
+      oldDelegate.progress != progress;
 }

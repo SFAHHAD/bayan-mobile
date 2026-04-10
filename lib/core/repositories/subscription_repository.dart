@@ -1,4 +1,5 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:bayan/core/models/purchase_receipt.dart';
 import 'package:bayan/core/models/subscription_tier.dart';
 import 'package:bayan/core/models/user_subscription.dart';
 
@@ -128,5 +129,96 @@ class SubscriptionRepository {
     TierType required,
   ) {
     return subscriptions.any((s) => s.grantsAccessTo(required));
+  }
+
+  // -------------------------------------------------------------------------
+  // IAP receipt-based activation (called by PaymentService after validation)
+  // -------------------------------------------------------------------------
+
+  /// Activates a subscription only after a server-verified receipt.
+  /// [receiptId] must exist in purchase_receipts with status='valid'.
+  Future<Map<String, dynamic>> activateViaReceipt({
+    required String receiptId,
+    required TierType tier,
+    DateTime? expiresAt,
+  }) async {
+    final raw = await _client.rpc(
+      'activate_subscription_from_receipt',
+      params: {
+        'p_receipt_id': receiptId,
+        'p_tier_type': SubscriptionTier.typeToString(tier),
+        'p_expires_at': expiresAt?.toIso8601String(),
+      },
+    );
+    return Map<String, dynamic>.from(raw as Map);
+  }
+
+  // -------------------------------------------------------------------------
+  // Purchase receipt CRUD
+  // -------------------------------------------------------------------------
+
+  static const _receiptsTable = 'purchase_receipts';
+
+  Future<PurchaseReceipt> createReceipt({
+    required ReceiptPlatform platform,
+    required String productId,
+    required String receiptData,
+    String? transactionId,
+    TierType? tierType,
+  }) async {
+    final userId = _client.auth.currentUser!.id;
+    final data = await _client
+        .from(_receiptsTable)
+        .insert({
+          'user_id': userId,
+          'platform': PurchaseReceipt.platformToString(platform),
+          'product_id': productId,
+          'receipt_data': receiptData,
+          'transaction_id': transactionId,
+          'tier_type': tierType == null
+              ? null
+              : SubscriptionTier.typeToString(tierType),
+        })
+        .select()
+        .single();
+    return PurchaseReceipt.fromMap(data);
+  }
+
+  Future<PurchaseReceipt?> fetchReceipt(String receiptId) async {
+    final data = await _client
+        .from(_receiptsTable)
+        .select()
+        .eq('id', receiptId)
+        .maybeSingle();
+    if (data == null) return null;
+    return PurchaseReceipt.fromMap(data);
+  }
+
+  Future<List<PurchaseReceipt>> fetchMyReceipts() async {
+    final userId = _client.auth.currentUser?.id;
+    if (userId == null) return [];
+    final data = await _client
+        .from(_receiptsTable)
+        .select()
+        .eq('user_id', userId)
+        .order('created_at', ascending: false);
+    return (data as List)
+        .map((r) => PurchaseReceipt.fromMap(r as Map<String, dynamic>))
+        .toList();
+  }
+
+  Future<void> updateReceiptStatus(
+    String receiptId,
+    ReceiptStatus status, {
+    Map<String, dynamic>? rawResponse,
+  }) async {
+    await _client
+        .from(_receiptsTable)
+        .update({
+          'status': PurchaseReceipt.statusToString(status),
+          'validated_at': DateTime.now().toIso8601String(),
+          'raw_response': rawResponse,
+        })
+        .eq('id', receiptId);
   }
 }

@@ -7,6 +7,38 @@ class NotificationService {
 
   const NotificationService(this._client);
 
+  // -------------------------------------------------------------------------
+  // FCM token management
+  // -------------------------------------------------------------------------
+
+  /// Registers (or refreshes) the device FCM token for the current user.
+  /// [platform] must be 'android', 'ios', or 'web'.
+  Future<void> registerFcmToken(String token, String platform) async {
+    await _client.rpc(
+      'upsert_fcm_token',
+      params: {'p_token': token, 'p_platform': platform},
+    );
+  }
+
+  /// Deactivates a FCM token (on logout or token rotation).
+  Future<void> revokeFcmToken(String token) async {
+    await _client.rpc('revoke_fcm_token', params: {'p_token': token});
+  }
+
+  /// Returns active FCM tokens for the current user (for server fanout).
+  Future<List<String>> fetchMyFcmTokens() async {
+    final userId = _client.auth.currentUser?.id;
+    if (userId == null) return [];
+    final data = await _client
+        .from('user_fcm_tokens')
+        .select('token')
+        .eq('user_id', userId)
+        .eq('is_active', true);
+    return (data as List)
+        .map((r) => (r as Map<String, dynamic>)['token'] as String)
+        .toList();
+  }
+
   static const _table = 'notifications';
 
   // Interactive notification action types

@@ -21,6 +21,8 @@ import 'package:bayan/features/settings/presentation/settings_center_screen.dart
 import 'package:bayan/core/widgets/loyalty_dashboard.dart';
 import 'package:bayan/core/widgets/voice_print.dart';
 import 'package:bayan/features/subscription/presentation/sovereign_club_screen.dart';
+import 'package:bayan/features/governance/presentation/governance_screen.dart';
+import 'package:bayan/core/widgets/share_story_sheet.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -491,6 +493,56 @@ class _ProfileScreenState extends State<ProfileScreen>
           ),
           const SizedBox(height: 12),
           const FounderGlowBadge(),
+          const SizedBox(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              HapticButton(
+                hapticType: HapticFeedbackType.selection,
+                onTap: () => showShareStory(
+                  context,
+                  title: 'عبدالله الكندري',
+                  subtitle: '٤٧ مقطع صوتي · مؤسس',
+                  hostName: '@abdullahk',
+                  type: 'voice',
+                ),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: BayanColors.accent.withValues(alpha: 0.1),
+                    border: Border.all(
+                      color: BayanColors.accent.withValues(alpha: 0.2),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(
+                        Icons.share_rounded,
+                        color: BayanColors.accent,
+                        size: 14,
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        'مشاركة',
+                        style: GoogleFonts.cairo(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w700,
+                          color: BayanColors.accent,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10),
+              const TrustMeter(score: 0.82, size: 80),
+            ],
+          ),
         ],
       ),
     );

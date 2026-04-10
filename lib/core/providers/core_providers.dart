@@ -26,8 +26,11 @@ import 'package:bayan/core/repositories/config_repository.dart';
 import 'package:bayan/core/repositories/loyalty_repository.dart';
 import 'package:bayan/core/repositories/semantic_search_repository.dart';
 import 'package:bayan/core/repositories/subscription_repository.dart';
+import 'package:bayan/core/repositories/governance_repository.dart';
 import 'package:bayan/core/services/crash_recovery_service.dart';
+import 'package:bayan/core/services/payment_service.dart';
 import 'package:bayan/core/services/prefetch_service.dart';
+import 'package:bayan/core/services/reputation_service.dart';
 
 final supabaseClientProvider = Provider<SupabaseClient>(
   (ref) => Supabase.instance.client,
@@ -146,4 +149,16 @@ final subscriptionRepositoryProvider = Provider<SubscriptionRepository>(
 
 final prefetchServiceProvider = Provider<PrefetchService>(
   (ref) => PrefetchService(ref.read(recommendationRepositoryProvider)),
+);
+
+final governanceRepositoryProvider = Provider<GovernanceRepository>(
+  (ref) => GovernanceRepository(ref.read(supabaseClientProvider)),
+);
+
+final reputationServiceProvider = Provider<ReputationService>(
+  (ref) => ReputationService(ref.read(supabaseClientProvider)),
+);
+
+final paymentServiceProvider = Provider<PaymentService>(
+  (ref) => PaymentService(ref.read(subscriptionRepositoryProvider)),
 );
