@@ -15,6 +15,7 @@ import 'package:bayan/features/diwan/presentation/diwan_detail_screen.dart';
 import 'package:bayan/features/profile/presentation/speaker_profile_screen.dart';
 import 'package:bayan/features/notifications/presentation/notification_center_screen.dart';
 import 'package:bayan/core/widgets/bayan_refresh_indicator.dart';
+import 'package:bayan/core/widgets/ai_summary_card.dart';
 
 class _DiwanData {
   final String id;
@@ -246,6 +247,7 @@ class _DiwanFeedScreenState extends ConsumerState<DiwanFeedScreen>
             slivers: [
               SliverToBoxAdapter(child: _buildHeader()),
               SliverToBoxAdapter(child: _buildLiveIndicator(diwans)),
+              SliverToBoxAdapter(child: _buildAiSummary()),
               SliverToBoxAdapter(child: _buildTopVoices()),
               SliverPadding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -506,6 +508,28 @@ class _DiwanFeedScreenState extends ConsumerState<DiwanFeedScreen>
       ],
     ),
   ];
+
+  Widget _buildAiSummary() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+      child: AiSummaryCard(
+        data: AiSummaryData(
+          diwanName: 'ديوان الشعر الحديث',
+          hostName: 'عبدالله المطيري',
+          summary:
+              'تناول المجلس أبرز قصائد الشعر النبطي المعاصر، مع تحليل معمّق لأساليب الشعراء الشباب وتأثيرهم على الساحة الأدبية الخليجية. نوقشت العلاقة بين الشعر والهوية الثقافية.',
+          topics: [
+            'الشعر النبطي',
+            'الأدب المعاصر',
+            'الهوية الثقافية',
+            'الشعراء الشباب',
+          ],
+          duration: '١ ساعة ٢٠ دقيقة',
+          listenerCount: 87,
+        ),
+      ),
+    );
+  }
 
   Widget _buildTopVoices() {
     return Column(

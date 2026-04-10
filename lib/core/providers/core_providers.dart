@@ -10,6 +10,8 @@ import 'package:bayan/core/repositories/search_repository.dart';
 import 'package:bayan/core/repositories/social_repository.dart';
 import 'package:bayan/core/repositories/tag_repository.dart';
 import 'package:bayan/core/repositories/analytics_repository.dart';
+import 'package:bayan/core/repositories/schedule_repository.dart';
+import 'package:bayan/core/repositories/wallet_repository.dart';
 import 'package:bayan/core/repositories/voice_repository.dart';
 
 final supabaseClientProvider = Provider<SupabaseClient>(
@@ -58,4 +60,12 @@ final searchRepositoryProvider = Provider<SearchRepository>(
 
 final analyticsRepositoryProvider = Provider<AnalyticsRepository>(
   (ref) => AnalyticsRepository(ref.read(supabaseClientProvider)),
+);
+
+final scheduleRepositoryProvider = Provider<ScheduleRepository>(
+  (ref) => ScheduleRepository(ref.read(supabaseClientProvider)),
+);
+
+final walletRepositoryProvider = Provider<WalletRepository>(
+  (ref) => WalletRepository(ref.read(supabaseClientProvider)),
 );

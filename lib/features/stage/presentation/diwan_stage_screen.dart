@@ -12,6 +12,7 @@ import 'package:bayan/core/widgets/host_control_panel.dart';
 import 'package:bayan/core/widgets/share_diwan_sheet.dart';
 import 'package:bayan/core/widgets/stage_chat_overlay.dart';
 import 'package:bayan/core/widgets/join_request_banner.dart';
+import 'package:bayan/core/widgets/gift_overlay.dart';
 
 enum StageRole { host, speaker, listener }
 
@@ -95,6 +96,8 @@ class _DiwanStageScreenState extends State<DiwanStageScreen> {
   bool _isRoomLocked = false;
   bool _showChat = false;
   bool _showJoinRequest = true;
+  bool _showGiftAnimation = false;
+  EliteGift? _activeGift;
 
   final _emojis = ['👏', '🔥', '❤️', '😂', '💡', '✨'];
 
@@ -186,6 +189,17 @@ class _DiwanStageScreenState extends State<DiwanStageScreen> {
               onToggle: () => setState(() => _showChat = false),
             ),
           ),
+          if (_showGiftAnimation && _activeGift != null)
+            Positioned.fill(
+              child: GiftAnimationOverlay(
+                gift: _activeGift!,
+                senderName: 'خالد العتيبي',
+                onComplete: () => setState(() {
+                  _showGiftAnimation = false;
+                  _activeGift = null;
+                }),
+              ),
+            ),
         ],
       ),
     );
@@ -256,6 +270,25 @@ class _DiwanStageScreenState extends State<DiwanStageScreen> {
                     ],
                   ),
                 ),
+                HapticButton(
+                  hapticType: HapticFeedbackType.selection,
+                  onTap: () => showGiftLeaderboard(context),
+                  child: Container(
+                    width: 36,
+                    height: 36,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: BayanColors.glassBackground,
+                      border: Border.all(color: BayanColors.glassBorder),
+                    ),
+                    child: const Icon(
+                      Icons.emoji_events_rounded,
+                      color: Color(0xFFD4AF37),
+                      size: 18,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
                 HapticButton(
                   hapticType: HapticFeedbackType.selection,
                   onTap: _openShareSheet,
@@ -532,6 +565,21 @@ class _DiwanStageScreenState extends State<DiwanStageScreen> {
                     HapticFeedback.selectionClick();
                     setState(() => _showEmojis = !_showEmojis);
                   },
+                ),
+                _ControlButton(
+                  icon: Icons.card_giftcard_rounded,
+                  label: 'هدية',
+                  isActive: false,
+                  activeColor: const Color(0xFFD4AF37),
+                  onTap: () => showGiftPanel(
+                    context,
+                    onGiftSent: () {
+                      setState(() {
+                        _activeGift = eliteGifts[0];
+                        _showGiftAnimation = true;
+                      });
+                    },
+                  ),
                 ),
                 if (widget.currentUserRole == StageRole.host)
                   _ControlButton(

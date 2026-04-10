@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:bayan/core/theme/theme.dart';
 import 'package:bayan/features/diwan/presentation/diwan_feed_screen.dart';
 import 'package:bayan/features/search/presentation/search_screen.dart';
+import 'package:bayan/features/schedule/presentation/schedule_hub_screen.dart';
 import 'package:bayan/features/profile/presentation/profile_screen.dart';
 
 class MainShell extends StatefulWidget {
@@ -17,7 +18,12 @@ class MainShell extends StatefulWidget {
 class _MainShellState extends State<MainShell> {
   int _currentIndex = 0;
 
-  final _screens = const [DiwanFeedScreen(), SearchScreen(), ProfileScreen()];
+  final _screens = const [
+    DiwanFeedScreen(),
+    SearchScreen(),
+    ScheduleHubScreen(),
+    ProfileScreen(),
+  ];
 
   void _onTabTap(int index) {
     if (index == _currentIndex) return;
@@ -67,10 +73,16 @@ class _MainShellState extends State<MainShell> {
                 onTap: () => _onTabTap(1),
               ),
               _NavItem(
-                icon: Icons.person_rounded,
-                label: 'حسابي',
+                icon: Icons.calendar_month_rounded,
+                label: 'الجدول',
                 isSelected: _currentIndex == 2,
                 onTap: () => _onTabTap(2),
+              ),
+              _NavItem(
+                icon: Icons.person_rounded,
+                label: 'حسابي',
+                isSelected: _currentIndex == 3,
+                onTap: () => _onTabTap(3),
               ),
             ],
           ),

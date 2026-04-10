@@ -11,6 +11,7 @@ import 'package:bayan/core/widgets/haptic_button.dart';
 import 'package:bayan/core/widgets/voice_card.dart';
 import 'package:bayan/core/widgets/elite_avatar_badge.dart';
 import 'package:bayan/core/widgets/insights_charts.dart';
+import 'package:bayan/core/widgets/wallet_tab.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -210,7 +211,7 @@ class _ProfileScreenState extends State<ProfileScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 4, vsync: this);
     Future.delayed(const Duration(milliseconds: 900), () {
       if (mounted) setState(() => _isLoading = false);
     });
@@ -251,6 +252,7 @@ class _ProfileScreenState extends State<ProfileScreen>
             children: [
               _buildVoiceGalleryTab(),
               const InsightsTab(),
+              const WalletTab(),
               _buildAboutTab(),
             ],
           ),
@@ -446,16 +448,17 @@ class _ProfileScreenState extends State<ProfileScreen>
           labelColor: BayanColors.accent,
           unselectedLabelColor: BayanColors.textSecondary,
           labelStyle: GoogleFonts.cairo(
-            fontSize: 14,
+            fontSize: 13,
             fontWeight: FontWeight.w700,
           ),
           unselectedLabelStyle: GoogleFonts.cairo(
-            fontSize: 14,
+            fontSize: 13,
             fontWeight: FontWeight.w500,
           ),
           tabs: const [
-            Tab(text: 'معرض الأصوات'),
+            Tab(text: 'الأصوات'),
             Tab(text: 'الإحصائيات'),
+            Tab(text: 'المحفظة'),
             Tab(text: 'الإعدادات'),
           ],
           onTap: (_) => HapticFeedback.selectionClick(),
