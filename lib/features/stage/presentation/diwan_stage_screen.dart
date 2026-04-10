@@ -8,6 +8,8 @@ import 'package:bayan/core/widgets/glassmorphic_container.dart';
 import 'package:bayan/core/widgets/haptic_button.dart';
 import 'package:bayan/core/widgets/pulsing_dot.dart';
 import 'package:bayan/core/widgets/speaking_avatar.dart';
+import 'package:bayan/core/widgets/host_control_panel.dart';
+import 'package:bayan/core/widgets/share_diwan_sheet.dart';
 
 enum StageRole { host, speaker, listener }
 
@@ -88,8 +90,43 @@ class _DiwanStageScreenState extends State<DiwanStageScreen> {
   bool _isMicOn = false;
   bool _isHandRaised = false;
   bool _showEmojis = false;
+  bool _isRoomLocked = false;
 
   final _emojis = ['👏', '🔥', '❤️', '😂', '💡', '✨'];
+
+  void _openHostPanel() {
+    HapticFeedback.mediumImpact();
+    final participants = [
+      ..._placeholderSpeakers.map(
+        (m) => ParticipantInfo(
+          name: m.name,
+          initial: m.initial,
+          isSpeaker: true,
+          isMuted: m.isMuted,
+        ),
+      ),
+      ..._placeholderListeners.map(
+        (m) => ParticipantInfo(name: m.name, initial: m.initial),
+      ),
+    ];
+    showHostControlPanel(
+      context,
+      participants: participants,
+      isRoomLocked: _isRoomLocked,
+      onLockChanged: (val) => setState(() => _isRoomLocked = val),
+      onMuteAll: () {},
+    );
+  }
+
+  void _openShareSheet() {
+    HapticFeedback.selectionClick();
+    showShareDiwanSheet(
+      context,
+      diwanName: widget.diwanName,
+      hostName: widget.hostName,
+      listenerCount: _placeholderSpeakers.length + _placeholderListeners.length,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -193,6 +230,25 @@ class _DiwanStageScreenState extends State<DiwanStageScreen> {
                     ],
                   ),
                 ),
+                HapticButton(
+                  hapticType: HapticFeedbackType.selection,
+                  onTap: _openShareSheet,
+                  child: Container(
+                    width: 36,
+                    height: 36,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: BayanColors.glassBackground,
+                      border: Border.all(color: BayanColors.glassBorder),
+                    ),
+                    child: const Icon(
+                      Icons.share_rounded,
+                      color: BayanColors.accent,
+                      size: 18,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
                 HapticButton(
                   hapticType: HapticFeedbackType.medium,
                   onTap: () {
@@ -440,11 +496,11 @@ class _DiwanStageScreenState extends State<DiwanStageScreen> {
                 ),
                 if (widget.currentUserRole == StageRole.host)
                   _ControlButton(
-                    icon: Icons.volume_off_rounded,
-                    label: 'كتم الكل',
+                    icon: Icons.admin_panel_settings_rounded,
+                    label: 'إدارة',
                     isActive: false,
-                    activeColor: Colors.redAccent,
-                    onTap: () => HapticFeedback.heavyImpact(),
+                    activeColor: const Color(0xFFD4AF37),
+                    onTap: _openHostPanel,
                   ),
               ],
             ),

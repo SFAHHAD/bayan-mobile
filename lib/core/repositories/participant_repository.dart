@@ -103,6 +103,70 @@ class ParticipantRepository {
         .eq('id', requestId);
   }
 
+  // -------------------------------------------------------------------------
+  // Host controls: kick & ban
+  // -------------------------------------------------------------------------
+
+  static const _bansTable = 'diwan_bans';
+
+  /// Removes [userId] from the active diwan session (temporary — they can rejoin).
+  Future<void> kickParticipant(String diwanId, String userId) async {
+    await _client
+        .from(_participantsTable)
+        .delete()
+        .eq('diwan_id', diwanId)
+        .eq('user_id', userId);
+  }
+
+  /// Permanently bans [userId] from [diwanId].
+  /// Kicks them first, then records a permanent ban entry.
+  Future<void> banFromDiwan(
+    String diwanId,
+    String userId, {
+    String? reason,
+  }) async {
+    await kickParticipant(diwanId, userId);
+    await _client.from(_bansTable).upsert({
+      'diwan_id': diwanId,
+      'user_id': userId,
+      'banned_by': _client.auth.currentUser?.id,
+      'reason': reason,
+    });
+  }
+
+  /// Lifts the permanent ban for [userId] in [diwanId].
+  Future<void> unbanFromDiwan(String diwanId, String userId) async {
+    await _client
+        .from(_bansTable)
+        .delete()
+        .eq('diwan_id', diwanId)
+        .eq('user_id', userId);
+  }
+
+  /// Returns true if [userId] is permanently banned from [diwanId].
+  Future<bool> isBanned(String diwanId, String userId) async {
+    final data = await _client
+        .from(_bansTable)
+        .select('user_id')
+        .eq('diwan_id', diwanId)
+        .eq('user_id', userId)
+        .maybeSingle();
+    return data != null;
+  }
+
+  /// Returns all banned user IDs for [diwanId] (host use only).
+  Future<List<String>> getBannedUsers(String diwanId) async {
+    final data = await _client
+        .from(_bansTable)
+        .select('user_id')
+        .eq('diwan_id', diwanId);
+    return (data as List).map((r) => r['user_id'] as String).toList();
+  }
+
+  // -------------------------------------------------------------------------
+  // Speak requests
+  // -------------------------------------------------------------------------
+
   /// Real-time stream of pending speak requests for a diwan (host use only).
   Stream<List<SpeakRequest>> watchSpeakRequests(String diwanId) {
     return _client

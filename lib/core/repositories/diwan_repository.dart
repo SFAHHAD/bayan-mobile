@@ -80,6 +80,37 @@ class DiwanRepository implements BaseRepository<Diwan> {
         );
   }
 
+  // -------------------------------------------------------------------------
+  // Trending
+  // -------------------------------------------------------------------------
+
+  /// Returns diwans sorted by hotness score via `get_trending_diwans` RPC.
+  Future<List<Diwan>> getTrending({int limit = 20}) async {
+    final data =
+        await _client.rpc('get_trending_diwans', params: {'p_limit': limit})
+            as List<dynamic>;
+    return data.map((r) => Diwan.fromMap(r as Map<String, dynamic>)).toList();
+  }
+
+  // -------------------------------------------------------------------------
+  // Tags
+  // -------------------------------------------------------------------------
+
+  /// Returns public diwans that have the given [tagId] attached.
+  Future<List<Diwan>> getDiwansByTag(String tagId) async {
+    final data = await _client
+        .from('diwan_tags')
+        .select('diwans(*)')
+        .eq('tag_id', tagId);
+    return (data as List)
+        .map((r) => Diwan.fromMap(r['diwans'] as Map<String, dynamic>))
+        .toList();
+  }
+
+  // -------------------------------------------------------------------------
+  // Live operations
+  // -------------------------------------------------------------------------
+
   /// Called when a user enters a Diwan room.
   /// Delegates to the Supabase RPC defined in migration 002.
   Future<void> incrementListenerCount(String diwanId) async {

@@ -9,6 +9,7 @@ import 'package:bayan/core/widgets/shimmer_skeleton.dart';
 import 'package:bayan/core/widgets/audio_waveform_painter.dart';
 import 'package:bayan/core/widgets/haptic_button.dart';
 import 'package:bayan/core/widgets/voice_card.dart';
+import 'package:bayan/core/widgets/elite_avatar_badge.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -304,7 +305,14 @@ class _ProfileScreenState extends State<ProfileScreen>
             ],
           ),
         ),
-        Positioned(bottom: -40, child: _buildAvatar()),
+        Positioned(
+          bottom: -40,
+          child: EliteAvatarBadge(
+            voiceCount: 47,
+            size: 96,
+            child: _buildAvatar(),
+          ),
+        ),
       ],
     );
   }

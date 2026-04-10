@@ -8,6 +8,8 @@ import 'package:bayan/core/widgets/haptic_button.dart';
 import 'package:bayan/core/widgets/follow_button.dart';
 import 'package:bayan/core/widgets/voice_card.dart';
 import 'package:bayan/core/widgets/audio_waveform_painter.dart';
+import 'package:bayan/core/widgets/elite_avatar_badge.dart';
+import 'package:bayan/core/widgets/report_modal.dart';
 
 class SpeakerProfileScreen extends StatefulWidget {
   final String heroTag;
@@ -227,6 +229,36 @@ class _SpeakerProfileScreenState extends State<SpeakerProfileScreen>
               ),
             ),
           ),
+          const Spacer(),
+          HapticButton(
+            hapticType: HapticFeedbackType.selection,
+            onTap: () => showReportModal(context, targetName: widget.name),
+            child: GlassmorphicContainer(
+              borderRadius: 14,
+              padding: const EdgeInsets.all(10),
+              blur: 10,
+              child: const Icon(
+                Icons.flag_outlined,
+                color: BayanColors.textSecondary,
+                size: 20,
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          HapticButton(
+            hapticType: HapticFeedbackType.selection,
+            onTap: () => showBlockConfirmation(context, userName: widget.name),
+            child: GlassmorphicContainer(
+              borderRadius: 14,
+              padding: const EdgeInsets.all(10),
+              blur: 10,
+              child: Icon(
+                Icons.block_rounded,
+                color: Colors.redAccent.withValues(alpha: 0.7),
+                size: 20,
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -240,35 +272,42 @@ class _SpeakerProfileScreenState extends State<SpeakerProfileScreen>
       ),
       child: Column(
         children: [
-          Hero(
-            tag: widget.heroTag,
-            child: Container(
-              width: 96,
-              height: 96,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: LinearGradient(
-                  colors: [
-                    BayanColors.accent.withValues(alpha: 0.3),
-                    BayanColors.surface,
+          EliteAvatarBadge(
+            voiceCount: 47,
+            size: 96,
+            child: Hero(
+              tag: widget.heroTag,
+              child: Container(
+                width: 96,
+                height: 96,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: LinearGradient(
+                    colors: [
+                      BayanColors.accent.withValues(alpha: 0.3),
+                      BayanColors.surface,
+                    ],
+                  ),
+                  border: Border.all(
+                    color: BayanColors.glassBorder,
+                    width: 1.5,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: BayanColors.accent.withValues(alpha: 0.25),
+                      blurRadius: 24,
+                      spreadRadius: -4,
+                    ),
                   ],
                 ),
-                border: Border.all(color: BayanColors.glassBorder, width: 1.5),
-                boxShadow: [
-                  BoxShadow(
-                    color: BayanColors.accent.withValues(alpha: 0.25),
-                    blurRadius: 24,
-                    spreadRadius: -4,
-                  ),
-                ],
-              ),
-              child: Center(
-                child: Text(
-                  widget.initial,
-                  style: GoogleFonts.cairo(
-                    fontSize: 36,
-                    fontWeight: FontWeight.w800,
-                    color: BayanColors.textPrimary,
+                child: Center(
+                  child: Text(
+                    widget.initial,
+                    style: GoogleFonts.cairo(
+                      fontSize: 36,
+                      fontWeight: FontWeight.w800,
+                      color: BayanColors.textPrimary,
+                    ),
                   ),
                 ),
               ),

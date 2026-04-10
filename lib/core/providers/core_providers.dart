@@ -5,7 +5,10 @@ import 'package:bayan/core/repositories/diwan_repository.dart';
 import 'package:bayan/core/repositories/message_repository.dart';
 import 'package:bayan/core/repositories/participant_repository.dart';
 import 'package:bayan/core/repositories/profile_repository.dart';
+import 'package:bayan/core/repositories/moderation_repository.dart';
+import 'package:bayan/core/repositories/search_repository.dart';
 import 'package:bayan/core/repositories/social_repository.dart';
+import 'package:bayan/core/repositories/tag_repository.dart';
 import 'package:bayan/core/repositories/voice_repository.dart';
 
 final supabaseClientProvider = Provider<SupabaseClient>(
@@ -38,4 +41,16 @@ final socialRepositoryProvider = Provider<SocialRepository>(
 
 final voiceRepositoryProvider = Provider<VoiceRepository>(
   (ref) => VoiceRepository(ref.read(supabaseClientProvider)),
+);
+
+final tagRepositoryProvider = Provider<TagRepository>(
+  (ref) => TagRepository(ref.read(supabaseClientProvider)),
+);
+
+final moderationRepositoryProvider = Provider<ModerationRepository>(
+  (ref) => ModerationRepository(ref.read(supabaseClientProvider)),
+);
+
+final searchRepositoryProvider = Provider<SearchRepository>(
+  (ref) => SearchRepository(ref.read(supabaseClientProvider)),
 );

@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:bayan/core/theme/theme.dart';
 import 'package:bayan/core/widgets/audio_waveform_painter.dart';
 import 'package:bayan/core/widgets/haptic_button.dart';
+import 'package:bayan/core/widgets/report_modal.dart';
 
 class VoiceCardData {
   final String id;
@@ -256,6 +257,15 @@ class _VoiceCardState extends State<VoiceCard>
           ),
         ),
         const Spacer(),
+        GestureDetector(
+          onTap: () => showReportModal(context, targetName: widget.data.title),
+          child: Icon(
+            Icons.more_horiz_rounded,
+            size: 18,
+            color: BayanColors.textSecondary.withValues(alpha: 0.5),
+          ),
+        ),
+        const SizedBox(width: 8),
         Icon(
           Icons.favorite_rounded,
           size: 14,
