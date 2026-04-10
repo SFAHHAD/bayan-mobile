@@ -15,6 +15,8 @@ import 'package:bayan/core/widgets/wallet_tab.dart';
 import 'package:bayan/features/referral/presentation/referral_hub_screen.dart';
 import 'package:bayan/features/verification/presentation/verification_screen.dart';
 import 'package:bayan/core/widgets/premium_ticket.dart';
+import 'package:bayan/features/creator/presentation/creator_studio_screen.dart';
+import 'package:bayan/core/widgets/live_event_banner.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -498,6 +500,28 @@ class _ProfileScreenState extends State<ProfileScreen>
             child: Column(
               children: [
                 _SettingsTile(
+                  icon: Icons.auto_awesome_rounded,
+                  label: 'مركز المبدعين',
+                  iconColor: const Color(0xFFD4AF37),
+                  showDivider: true,
+                  onTap: () {
+                    HapticFeedback.mediumImpact();
+                    Navigator.of(context).push(
+                      PageRouteBuilder(
+                        pageBuilder: (context, a, b) =>
+                            const CreatorStudioScreen(),
+                        transitionDuration: const Duration(milliseconds: 400),
+                        transitionsBuilder: (context, animation, _, child) {
+                          return FadeTransition(
+                            opacity: animation,
+                            child: child,
+                          );
+                        },
+                      ),
+                    );
+                  },
+                ),
+                _SettingsTile(
                   icon: Icons.person_outline_rounded,
                   label: 'تعديل الملف الشخصي',
                   showDivider: true,
@@ -506,6 +530,12 @@ class _ProfileScreenState extends State<ProfileScreen>
                   icon: Icons.notifications_none_rounded,
                   label: 'الإشعارات',
                   showDivider: true,
+                ),
+                _SettingsTile(
+                  icon: Icons.history_rounded,
+                  label: 'سجل النشاط',
+                  showDivider: true,
+                  onTap: () => showActivityHistory(context),
                 ),
                 _SettingsTile(
                   icon: Icons.verified_rounded,

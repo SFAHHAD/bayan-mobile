@@ -145,7 +145,7 @@ void main() {
   // ScheduledDiwan model
   // -------------------------------------------------------------------------
   group('ScheduledDiwan model', () {
-    final future = now.add(const Duration(hours: 2));
+    final future = DateTime.now().add(const Duration(hours: 2));
 
     Map<String, dynamic> schedMap({
       bool reminderSent = false,

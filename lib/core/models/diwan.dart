@@ -12,6 +12,8 @@ class Diwan {
   final int entryFee;
   final bool isPremium;
   final String moderationStatus;
+  final String? seriesId;
+  final int? episodeNumber;
   final DateTime? lastActivityAt;
   final DateTime createdAt;
   final DateTime updatedAt;
@@ -30,6 +32,8 @@ class Diwan {
     this.entryFee = 0,
     this.isPremium = false,
     this.moderationStatus = 'approved',
+    this.seriesId,
+    this.episodeNumber,
     this.lastActivityAt,
     required this.createdAt,
     required this.updatedAt,
@@ -50,6 +54,8 @@ class Diwan {
       entryFee: (map['entry_fee'] as int?) ?? 0,
       isPremium: (map['is_premium'] as bool?) ?? false,
       moderationStatus: (map['moderation_status'] as String?) ?? 'approved',
+      seriesId: map['series_id'] as String?,
+      episodeNumber: map['episode_number'] as int?,
       lastActivityAt: map['last_activity_at'] != null
           ? DateTime.parse(map['last_activity_at'] as String)
           : null,
@@ -72,6 +78,8 @@ class Diwan {
       'entry_fee': entryFee,
       'is_premium': isPremium,
       'moderation_status': moderationStatus,
+      'series_id': seriesId,
+      'episode_number': episodeNumber,
     };
   }
 
@@ -89,6 +97,8 @@ class Diwan {
     int? entryFee,
     bool? isPremium,
     String? moderationStatus,
+    String? seriesId,
+    int? episodeNumber,
     DateTime? lastActivityAt,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -107,6 +117,8 @@ class Diwan {
       entryFee: entryFee ?? this.entryFee,
       isPremium: isPremium ?? this.isPremium,
       moderationStatus: moderationStatus ?? this.moderationStatus,
+      seriesId: seriesId ?? this.seriesId,
+      episodeNumber: episodeNumber ?? this.episodeNumber,
       lastActivityAt: lastActivityAt ?? this.lastActivityAt,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,

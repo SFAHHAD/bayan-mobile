@@ -1,5 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:bayan/core/models/app_notification.dart';
+import 'package:bayan/core/models/deep_link.dart';
 
 class NotificationService {
   final SupabaseClient _client;
@@ -7,6 +8,13 @@ class NotificationService {
   const NotificationService(this._client);
 
   static const _table = 'notifications';
+
+  // Interactive notification action types
+  // These map to the `action_type` column added in migration 010
+  static const actionOpen = 'open';
+  static const actionJoinDiwan = 'join_diwan';
+  static const actionViewProfile = 'view_profile';
+  static const actionViewSeries = 'view_series';
 
   // -------------------------------------------------------------------------
   // Fetch
@@ -53,6 +61,52 @@ class NotificationService {
         .update({'is_read': true})
         .eq('user_id', userId)
         .eq('is_read', false);
+  }
+
+  // -------------------------------------------------------------------------
+  // Interactive action routing
+  // -------------------------------------------------------------------------
+
+  /// Converts a notification's [actionUrl] into a typed [DeepLink].
+  /// Returns `null` if the URL cannot be parsed.
+  DeepLink? resolveActionLink(AppNotification notification) {
+    final url = notification.actionUrl;
+    if (url == null || url.isEmpty) return null;
+    final uri = Uri.tryParse(url);
+    if (uri == null) return null;
+    return DeepLink.fromUri(uri);
+  }
+
+  /// Handles a tap on an interactive notification action.
+  /// Marks the notification as read and returns the resolved [DeepLink].
+  Future<DeepLink?> handleNotificationTap(AppNotification notification) async {
+    await markAsRead(notification.id);
+    return resolveActionLink(notification);
+  }
+
+  // -------------------------------------------------------------------------
+  // Insert helpers (called server-side or from Edge Functions)
+  // -------------------------------------------------------------------------
+
+  /// Inserts a single in-app notification with optional action metadata.
+  Future<void> sendNotification({
+    required String userId,
+    required String type,
+    required String title,
+    required String body,
+    String? actionUrl,
+    String actionType = actionOpen,
+    Map<String, dynamic> metadata = const {},
+  }) async {
+    await _client.from(_table).insert({
+      'user_id': userId,
+      'type': type,
+      'title': title,
+      'body': body,
+      'action_url': actionUrl,
+      'action_type': actionType,
+      'metadata': metadata,
+    });
   }
 
   // -------------------------------------------------------------------------

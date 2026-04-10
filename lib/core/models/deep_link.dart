@@ -1,4 +1,4 @@
-enum DeepLinkTarget { diwan, profile, unknown }
+enum DeepLinkTarget { diwan, profile, series, joinDiwan, referral, unknown }
 
 class DeepLink {
   final DeepLinkTarget target;
@@ -38,6 +38,24 @@ class DeepLink {
       case 'profile':
         return DeepLink(
           target: DeepLinkTarget.profile,
+          id: id,
+          params: Map.fromEntries(uri.queryParameters.entries),
+        );
+      case 'series':
+        return DeepLink(
+          target: DeepLinkTarget.series,
+          id: id,
+          params: Map.fromEntries(uri.queryParameters.entries),
+        );
+      case 'join':
+        return DeepLink(
+          target: DeepLinkTarget.joinDiwan,
+          id: id,
+          params: Map.fromEntries(uri.queryParameters.entries),
+        );
+      case 'referral':
+        return DeepLink(
+          target: DeepLinkTarget.referral,
           id: id,
           params: Map.fromEntries(uri.queryParameters.entries),
         );

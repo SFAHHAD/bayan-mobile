@@ -16,6 +16,8 @@ import 'package:bayan/features/profile/presentation/speaker_profile_screen.dart'
 import 'package:bayan/features/notifications/presentation/notification_center_screen.dart';
 import 'package:bayan/core/widgets/bayan_refresh_indicator.dart';
 import 'package:bayan/core/widgets/ai_summary_card.dart';
+import 'package:bayan/core/widgets/for_you_feed.dart';
+import 'package:bayan/core/widgets/live_event_banner.dart';
 
 class _DiwanData {
   final String id;
@@ -145,8 +147,10 @@ class DiwanFeedScreen extends ConsumerStatefulWidget {
 }
 
 class _DiwanFeedScreenState extends ConsumerState<DiwanFeedScreen>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late final AnimationController _staggerController;
+  late final TabController _feedTabController;
+  bool _showLiveBanner = true;
 
   @override
   void initState() {
@@ -155,11 +159,13 @@ class _DiwanFeedScreenState extends ConsumerState<DiwanFeedScreen>
       vsync: this,
       duration: const Duration(milliseconds: 1200),
     )..forward();
+    _feedTabController = TabController(length: 2, vsync: this);
   }
 
   @override
   void dispose() {
     _staggerController.dispose();
+    _feedTabController.dispose();
     super.dispose();
   }
 
@@ -237,51 +243,137 @@ class _DiwanFeedScreenState extends ConsumerState<DiwanFeedScreen>
     return Scaffold(
       backgroundColor: BayanColors.background,
       body: SafeArea(
-        child: BayanRefreshIndicator(
-          onRefresh: () async {
-            HapticFeedback.mediumImpact();
-            ref.invalidate(diwanNotifierProvider);
-            await Future.delayed(const Duration(milliseconds: 800));
-          },
-          child: CustomScrollView(
-            slivers: [
-              SliverToBoxAdapter(child: _buildHeader()),
-              SliverToBoxAdapter(child: _buildLiveIndicator(diwans)),
-              SliverToBoxAdapter(child: _buildAiSummary()),
-              SliverToBoxAdapter(child: _buildTopVoices()),
-              SliverPadding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                sliver: SliverList(
-                  delegate: SliverChildBuilderDelegate((context, index) {
-                    final interval = _staggerInterval(index);
-                    return AnimatedBuilder(
-                      animation: _staggerController,
-                      builder: (context, child) {
-                        final value = interval.transform(
-                          _staggerController.value.clamp(0.0, 1.0),
-                        );
-                        return Opacity(
-                          opacity: value,
-                          child: Transform.translate(
-                            offset: Offset(0, 30 * (1 - value)),
-                            child: child,
-                          ),
-                        );
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 16),
-                        child: _DiwanCard(
-                          diwan: diwans[index],
-                          onTap: () => _openDiwan(diwans[index]),
+        child: Stack(
+          children: [
+            Column(
+              children: [
+                _buildHeader(),
+                _buildFeedTabs(),
+                Expanded(
+                  child: TabBarView(
+                    controller: _feedTabController,
+                    children: [
+                      BayanRefreshIndicator(
+                        onRefresh: () async {
+                          HapticFeedback.mediumImpact();
+                          ref.invalidate(diwanNotifierProvider);
+                          await Future.delayed(
+                            const Duration(milliseconds: 800),
+                          );
+                        },
+                        child: CustomScrollView(
+                          slivers: [
+                            SliverToBoxAdapter(
+                              child: _buildLiveIndicator(diwans),
+                            ),
+                            SliverToBoxAdapter(child: _buildAiSummary()),
+                            SliverToBoxAdapter(child: _buildTopVoices()),
+                            SliverPadding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                              ),
+                              sliver: SliverList(
+                                delegate: SliverChildBuilderDelegate((
+                                  context,
+                                  index,
+                                ) {
+                                  final interval = _staggerInterval(index);
+                                  return AnimatedBuilder(
+                                    animation: _staggerController,
+                                    builder: (context, child) {
+                                      final value = interval.transform(
+                                        _staggerController.value.clamp(
+                                          0.0,
+                                          1.0,
+                                        ),
+                                      );
+                                      return Opacity(
+                                        opacity: value,
+                                        child: Transform.translate(
+                                          offset: Offset(0, 30 * (1 - value)),
+                                          child: child,
+                                        ),
+                                      );
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                        bottom: 16,
+                                      ),
+                                      child: _DiwanCard(
+                                        diwan: diwans[index],
+                                        onTap: () => _openDiwan(diwans[index]),
+                                      ),
+                                    ),
+                                  );
+                                }, childCount: diwans.length),
+                              ),
+                            ),
+                            const SliverToBoxAdapter(
+                              child: SizedBox(height: 100),
+                            ),
+                          ],
                         ),
                       ),
-                    );
-                  }, childCount: diwans.length),
+                      const ForYouFeed(),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            if (_showLiveBanner)
+              Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                child: LiveEventBanner(
+                  diwanName: 'ديوان الشعر الحديث',
+                  hostName: 'عبدالله المطيري',
+                  onJoin: () {},
+                  onDismiss: () => setState(() => _showLiveBanner = false),
                 ),
               ),
-              const SliverToBoxAdapter(child: SizedBox(height: 100)),
-            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFeedTabs() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 4, 24, 8),
+      child: Container(
+        height: 40,
+        decoration: BoxDecoration(
+          color: BayanColors.glassBackground,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: BayanColors.glassBorder),
+        ),
+        child: TabBar(
+          controller: _feedTabController,
+          indicator: BoxDecoration(
+            color: BayanColors.accent.withValues(alpha: 0.15),
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(
+              color: BayanColors.accent.withValues(alpha: 0.3),
+            ),
           ),
+          indicatorSize: TabBarIndicatorSize.tab,
+          dividerColor: Colors.transparent,
+          labelColor: BayanColors.accent,
+          unselectedLabelColor: BayanColors.textSecondary,
+          labelStyle: GoogleFonts.cairo(
+            fontSize: 13,
+            fontWeight: FontWeight.w700,
+          ),
+          unselectedLabelStyle: GoogleFonts.cairo(
+            fontSize: 13,
+            fontWeight: FontWeight.w500,
+          ),
+          tabs: const [
+            Tab(text: 'الديوانيّات'),
+            Tab(text: 'لك'),
+          ],
+          onTap: (_) => HapticFeedback.selectionClick(),
         ),
       ),
     );

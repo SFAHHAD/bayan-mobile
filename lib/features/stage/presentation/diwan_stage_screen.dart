@@ -7,7 +7,6 @@ import 'package:bayan/core/theme/theme.dart';
 import 'package:bayan/core/widgets/glassmorphic_container.dart';
 import 'package:bayan/core/widgets/haptic_button.dart';
 import 'package:bayan/core/widgets/pulsing_dot.dart';
-import 'package:bayan/core/widgets/speaking_avatar.dart';
 import 'package:bayan/core/widgets/host_control_panel.dart';
 import 'package:bayan/core/widgets/share_diwan_sheet.dart';
 import 'package:bayan/core/widgets/stage_chat_overlay.dart';
@@ -18,6 +17,7 @@ import 'package:bayan/core/widgets/qa_panel.dart';
 import 'package:bayan/core/widgets/audio_settings_panel.dart';
 import 'package:bayan/core/widgets/engagement_effects.dart';
 import 'package:bayan/core/widgets/spotlight_overlay.dart';
+import 'package:bayan/core/widgets/spatial_avatar.dart';
 
 enum StageRole { host, speaker, listener }
 
@@ -309,12 +309,18 @@ class _DiwanStageScreenState extends State<DiwanStageScreen> {
                         ],
                       ),
                       const SizedBox(height: 2),
-                      Text(
-                        '${_placeholderSpeakers.length + _placeholderListeners.length} مشارك',
-                        style: GoogleFonts.cairo(
-                          fontSize: 12,
-                          color: BayanColors.textSecondary,
-                        ),
+                      Row(
+                        children: [
+                          Text(
+                            '${_placeholderSpeakers.length + _placeholderListeners.length} مشارك',
+                            style: GoogleFonts.cairo(
+                              fontSize: 12,
+                              color: BayanColors.textSecondary,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          const HiFiBadge(),
+                        ],
                       ),
                     ],
                   ),
@@ -438,12 +444,14 @@ class _DiwanStageScreenState extends State<DiwanStageScreen> {
                 width: 100,
                 child: Column(
                   children: [
-                    SpeakingAvatar(
+                    SpatialSpeakingAvatar(
                       initial: member.initial,
                       size: 68,
                       isSpeaking: member.isSpeaking,
                       isMuted: member.isMuted,
                       isHost: member.role == StageRole.host,
+                      isHiFi: member.role == StageRole.host,
+                      spatialAngle: member.isSpeaking ? 0.5 : 0.0,
                     ),
                     const SizedBox(height: 8),
                     Text(

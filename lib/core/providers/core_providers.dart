@@ -18,6 +18,9 @@ import 'package:bayan/core/repositories/question_repository.dart';
 import 'package:bayan/core/repositories/referral_repository.dart';
 import 'package:bayan/core/repositories/marketplace_repository.dart';
 import 'package:bayan/core/repositories/verification_repository.dart';
+import 'package:bayan/core/repositories/series_repository.dart';
+import 'package:bayan/core/repositories/recommendation_repository.dart';
+import 'package:bayan/core/repositories/activity_log_repository.dart';
 
 final supabaseClientProvider = Provider<SupabaseClient>(
   (ref) => Supabase.instance.client,
@@ -93,4 +96,16 @@ final marketplaceRepositoryProvider = Provider<MarketplaceRepository>(
 
 final verificationRepositoryProvider = Provider<VerificationRepository>(
   (ref) => VerificationRepository(ref.read(supabaseClientProvider)),
+);
+
+final seriesRepositoryProvider = Provider<SeriesRepository>(
+  (ref) => SeriesRepository(ref.read(supabaseClientProvider)),
+);
+
+final recommendationRepositoryProvider = Provider<RecommendationRepository>(
+  (ref) => RecommendationRepository(ref.read(supabaseClientProvider)),
+);
+
+final activityLogRepositoryProvider = Provider<ActivityLogRepository>(
+  (ref) => ActivityLogRepository(ref.read(supabaseClientProvider)),
 );
