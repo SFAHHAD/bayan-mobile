@@ -13,6 +13,10 @@ import 'package:bayan/core/widgets/share_diwan_sheet.dart';
 import 'package:bayan/core/widgets/stage_chat_overlay.dart';
 import 'package:bayan/core/widgets/join_request_banner.dart';
 import 'package:bayan/core/widgets/gift_overlay.dart';
+import 'package:bayan/core/widgets/live_poll_overlay.dart';
+import 'package:bayan/core/widgets/qa_panel.dart';
+import 'package:bayan/core/widgets/audio_settings_panel.dart';
+import 'package:bayan/core/widgets/engagement_effects.dart';
 
 enum StageRole { host, speaker, listener }
 
@@ -98,6 +102,9 @@ class _DiwanStageScreenState extends State<DiwanStageScreen> {
   bool _showJoinRequest = true;
   bool _showGiftAnimation = false;
   EliteGift? _activeGift;
+  LivePollData? _activePoll;
+  bool _showQuestionToast = false;
+  bool _showConfetti = false;
 
   final _emojis = ['👏', '🔥', '❤️', '😂', '💡', '✨'];
 
@@ -189,6 +196,16 @@ class _DiwanStageScreenState extends State<DiwanStageScreen> {
               onToggle: () => setState(() => _showChat = false),
             ),
           ),
+          if (_activePoll != null)
+            Positioned(
+              top: MediaQuery.of(context).padding.top + 90,
+              left: 0,
+              right: 0,
+              child: LivePollOverlay(
+                poll: _activePoll!,
+                onDismiss: () => setState(() => _activePoll = null),
+              ),
+            ),
           if (_showGiftAnimation && _activeGift != null)
             Positioned.fill(
               child: GiftAnimationOverlay(
@@ -198,6 +215,26 @@ class _DiwanStageScreenState extends State<DiwanStageScreen> {
                   _showGiftAnimation = false;
                   _activeGift = null;
                 }),
+              ),
+            ),
+          if (_showConfetti)
+            Positioned.fill(
+              child: ConfettiOverlay(
+                onComplete: () => setState(() => _showConfetti = false),
+              ),
+            ),
+          if (_showQuestionToast && widget.currentUserRole == StageRole.host)
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: NewQuestionToast(
+                authorName: 'محمد الراشد',
+                onDismiss: () => setState(() => _showQuestionToast = false),
+                onTap: () {
+                  setState(() => _showQuestionToast = false);
+                  showQaPanel(context, isHost: true);
+                },
               ),
             ),
         ],
@@ -270,6 +307,25 @@ class _DiwanStageScreenState extends State<DiwanStageScreen> {
                     ],
                   ),
                 ),
+                HapticButton(
+                  hapticType: HapticFeedbackType.selection,
+                  onTap: () => showAudioSettingsPanel(context),
+                  child: Container(
+                    width: 36,
+                    height: 36,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: BayanColors.glassBackground,
+                      border: Border.all(color: BayanColors.glassBorder),
+                    ),
+                    child: const Icon(
+                      Icons.tune_rounded,
+                      color: BayanColors.accent,
+                      size: 18,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
                 HapticButton(
                   hapticType: HapticFeedbackType.selection,
                   onTap: () => showGiftLeaderboard(context),
@@ -567,6 +623,16 @@ class _DiwanStageScreenState extends State<DiwanStageScreen> {
                   },
                 ),
                 _ControlButton(
+                  icon: Icons.quiz_rounded,
+                  label: 'أسئلة',
+                  isActive: false,
+                  activeColor: const Color(0xFFD4AF37),
+                  onTap: () => showQaPanel(
+                    context,
+                    isHost: widget.currentUserRole == StageRole.host,
+                  ),
+                ),
+                _ControlButton(
                   icon: Icons.card_giftcard_rounded,
                   label: 'هدية',
                   isActive: false,
@@ -581,7 +647,24 @@ class _DiwanStageScreenState extends State<DiwanStageScreen> {
                     },
                   ),
                 ),
-                if (widget.currentUserRole == StageRole.host)
+                if (widget.currentUserRole == StageRole.host) ...[
+                  _ControlButton(
+                    icon: Icons.poll_rounded,
+                    label: 'تصويت',
+                    isActive: _activePoll != null,
+                    activeColor: BayanColors.accent,
+                    onTap: () => showCreatePollSheet(
+                      context,
+                      onCreated: (poll) {
+                        poll.options[0].votes = 12;
+                        poll.options[1].votes = 8;
+                        setState(() {
+                          _activePoll = poll;
+                          _showConfetti = true;
+                        });
+                      },
+                    ),
+                  ),
                   _ControlButton(
                     icon: Icons.admin_panel_settings_rounded,
                     label: 'إدارة',
@@ -589,6 +672,7 @@ class _DiwanStageScreenState extends State<DiwanStageScreen> {
                     activeColor: const Color(0xFFD4AF37),
                     onTap: _openHostPanel,
                   ),
+                ],
               ],
             ),
           ),

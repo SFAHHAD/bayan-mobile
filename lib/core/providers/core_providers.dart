@@ -13,6 +13,9 @@ import 'package:bayan/core/repositories/analytics_repository.dart';
 import 'package:bayan/core/repositories/schedule_repository.dart';
 import 'package:bayan/core/repositories/wallet_repository.dart';
 import 'package:bayan/core/repositories/voice_repository.dart';
+import 'package:bayan/core/repositories/poll_repository.dart';
+import 'package:bayan/core/repositories/question_repository.dart';
+import 'package:bayan/core/repositories/referral_repository.dart';
 
 final supabaseClientProvider = Provider<SupabaseClient>(
   (ref) => Supabase.instance.client,
@@ -68,4 +71,16 @@ final scheduleRepositoryProvider = Provider<ScheduleRepository>(
 
 final walletRepositoryProvider = Provider<WalletRepository>(
   (ref) => WalletRepository(ref.read(supabaseClientProvider)),
+);
+
+final pollRepositoryProvider = Provider<PollRepository>(
+  (ref) => PollRepository(ref.read(supabaseClientProvider)),
+);
+
+final questionRepositoryProvider = Provider<QuestionRepository>(
+  (ref) => QuestionRepository(ref.read(supabaseClientProvider)),
+);
+
+final referralRepositoryProvider = Provider<ReferralRepository>(
+  (ref) => ReferralRepository(ref.read(supabaseClientProvider)),
 );

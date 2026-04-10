@@ -58,6 +58,7 @@ class MessageRepository implements BaseRepository<Message> {
     required String senderId,
     required String senderName,
     required String content,
+    bool isEncrypted = false,
   }) async {
     final response = await _client
         .from(_table)
@@ -67,6 +68,7 @@ class MessageRepository implements BaseRepository<Message> {
           'sender_name': senderName,
           'content': content,
           'type': 'text',
+          'is_encrypted': isEncrypted,
         })
         .select()
         .single();

@@ -12,6 +12,7 @@ import 'package:bayan/core/widgets/voice_card.dart';
 import 'package:bayan/core/widgets/elite_avatar_badge.dart';
 import 'package:bayan/core/widgets/insights_charts.dart';
 import 'package:bayan/core/widgets/wallet_tab.dart';
+import 'package:bayan/features/referral/presentation/referral_hub_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -510,6 +511,28 @@ class _ProfileScreenState extends State<ProfileScreen>
                   showDivider: true,
                 ),
                 _SettingsTile(
+                  icon: Icons.workspace_premium_rounded,
+                  label: 'ادعُ النخبة',
+                  iconColor: const Color(0xFFD4AF37),
+                  showDivider: true,
+                  onTap: () {
+                    HapticFeedback.selectionClick();
+                    Navigator.of(context).push(
+                      PageRouteBuilder(
+                        pageBuilder: (context, a, b) =>
+                            const ReferralHubScreen(),
+                        transitionDuration: const Duration(milliseconds: 400),
+                        transitionsBuilder: (context, animation, _, child) {
+                          return FadeTransition(
+                            opacity: animation,
+                            child: child,
+                          );
+                        },
+                      ),
+                    );
+                  },
+                ),
+                _SettingsTile(
                   icon: Icons.language_rounded,
                   label: 'اللغة',
                   trailing: Text(
@@ -792,12 +815,16 @@ class _SettingsTile extends StatelessWidget {
   final String label;
   final Widget? trailing;
   final bool showDivider;
+  final Color? iconColor;
+  final VoidCallback? onTap;
 
   const _SettingsTile({
     required this.icon,
     required this.label,
     this.trailing,
     required this.showDivider,
+    this.iconColor,
+    this.onTap,
   });
 
   @override
@@ -806,13 +833,17 @@ class _SettingsTile extends StatelessWidget {
       children: [
         HapticButton(
           hapticType: HapticFeedbackType.selection,
-          onTap: () {},
+          onTap: onTap ?? () {},
           borderRadius: BorderRadius.zero,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             child: Row(
               children: [
-                Icon(icon, color: BayanColors.textSecondary, size: 22),
+                Icon(
+                  icon,
+                  color: iconColor ?? BayanColors.textSecondary,
+                  size: 22,
+                ),
                 const SizedBox(width: 14),
                 Expanded(
                   child: Text(

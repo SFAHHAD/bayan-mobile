@@ -148,6 +148,55 @@ class E2EService {
   }
 
   // -------------------------------------------------------------------------
+  // Raw-bytes helpers (used by E2EChatRepository for diwan session keys)
+  // -------------------------------------------------------------------------
+
+  /// Generates 32 cryptographically random bytes suitable for an AES-256 key.
+  Future<List<int>> generateRandomKeyBytes() async {
+    final key = await AesGcm.with256bits().newSecretKey();
+    return key.extractBytes();
+  }
+
+  /// AES-GCM encrypts raw [data] bytes with [secretKey].
+  /// Output format (Base64): `<12-byte nonce> || <ciphertext> || <16-byte MAC>`
+  Future<String> encryptBytes(List<int> data, SecretKey secretKey) async {
+    final aesGcm = AesGcm.with256bits();
+    final nonce = aesGcm.newNonce();
+    final box = await aesGcm.encrypt(data, secretKey: secretKey, nonce: nonce);
+    final combined = Uint8List.fromList([
+      ...nonce,
+      ...box.cipherText,
+      ...box.mac.bytes,
+    ]);
+    return base64Encode(combined);
+  }
+
+  /// Decrypts a Base64-encoded payload produced by [encryptBytes].
+  Future<List<int>> decryptBytes(
+    String cipherBase64,
+    SecretKey secretKey,
+  ) async {
+    final combined = base64Decode(cipherBase64);
+    const nonceLen = 12;
+    const macLen = 16;
+    if (combined.length < nonceLen + macLen) {
+      throw ArgumentError('Ciphertext too short');
+    }
+    final nonce = combined.sublist(0, nonceLen);
+    final mac = combined.sublist(combined.length - macLen);
+    final cipherText = combined.sublist(nonceLen, combined.length - macLen);
+    return AesGcm.with256bits().decrypt(
+      SecretBox(cipherText, nonce: nonce, mac: Mac(mac)),
+      secretKey: secretKey,
+    );
+  }
+
+  /// Creates an AES-256 [SecretKey] from raw [bytes].
+  Future<SecretKey> secretKeyFromBytes(List<int> bytes) async {
+    return AesGcm.with256bits().newSecretKeyFromBytes(bytes.sublist(0, 32));
+  }
+
+  // -------------------------------------------------------------------------
   // Session lifecycle
   // -------------------------------------------------------------------------
 

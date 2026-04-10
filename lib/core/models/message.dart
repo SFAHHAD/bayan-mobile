@@ -7,6 +7,7 @@ class Message {
   final String content;
   final MessageType type;
   final String? senderName;
+  final bool isEncrypted;
   final DateTime createdAt;
 
   const Message({
@@ -16,6 +17,7 @@ class Message {
     required this.content,
     this.type = MessageType.text,
     this.senderName,
+    this.isEncrypted = false,
     required this.createdAt,
   });
 
@@ -32,6 +34,7 @@ class Message {
       content: map['content'] as String,
       type: _typeFromString(map['type'] as String?),
       senderName: map['sender_name'] as String?,
+      isEncrypted: (map['is_encrypted'] as bool?) ?? false,
       createdAt: DateTime.parse(map['created_at'] as String),
     );
   }
@@ -43,6 +46,7 @@ class Message {
       'content': content,
       'type': type.name,
       'sender_name': senderName,
+      'is_encrypted': isEncrypted,
     };
   }
 
@@ -53,6 +57,7 @@ class Message {
     String? content,
     MessageType? type,
     String? senderName,
+    bool? isEncrypted,
     DateTime? createdAt,
   }) {
     return Message(
@@ -62,6 +67,7 @@ class Message {
       content: content ?? this.content,
       type: type ?? this.type,
       senderName: senderName ?? this.senderName,
+      isEncrypted: isEncrypted ?? this.isEncrypted,
       createdAt: createdAt ?? this.createdAt,
     );
   }
