@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>بَيَان — صوتك يُسمع | Bayan App</title>
+  <meta name="description" content="بَيَان — المنصة العربية الأولى للديوانيّات الصوتية الحيّة. انضم لنادي السيادة واستمتع بتجربة بلا حدود.">
+  <meta name="theme-color" content="#0A0E1A">
+  <meta property="og:title" content="بَيَان — صوتك يُسمع">
+  <meta property="og:description" content="المنصة العربية الأولى للديوانيّات الصوتية الحيّة">
+  <meta property="og:type" content="website">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0A0E1A;
+      --surface: #131829;
+      --glass: rgba(255,255,255,0.04);
+      --glass-border: rgba(255,255,255,0.08);
+      --text-primary: #F0F0F5;
+      --text-secondary: rgba(240,240,245,0.55);
+      --accent: #5CBFAD;
+      --accent-light: #7DD4C4;
+      --gold: #D4AF37;
+      --purple: #6C3FA0;
+    }
+
+    body {
+      font-family: 'Cairo', sans-serif;
+      background: var(--bg);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+      direction: rtl;
+    }
+
+    .bg-glow {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background:
+        radial-gradient(ellipse 600px 400px at 20% 15%, rgba(92,191,173,0.06), transparent),
+        radial-gradient(ellipse 500px 500px at 80% 80%, rgba(108,63,160,0.05), transparent),
+        radial-gradient(ellipse 400px 300px at 50% 50%, rgba(212,175,55,0.03), transparent);
+    }
+
+    .container {
+      position: relative; z-index: 1;
+      max-width: 800px; margin: 0 auto; padding: 0 24px;
+    }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center; padding: 60px 24px;
+    }
+
+    .logo-ring {
+      width: 140px; height: 140px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--glass);
+      border: 1.5px solid var(--glass-border);
+      position: relative;
+      margin-bottom: 32px;
+      animation: pulse-glow 3s ease-in-out infinite;
+    }
+
+    .logo-ring::before {
+      content: '';
+      position: absolute; inset: -4px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      background: conic-gradient(from 0deg, transparent, var(--accent), transparent) border-box;
+      mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+      mask-composite: exclude;
+      -webkit-mask-composite: xor;
+      animation: spin-ring 4s linear infinite;
+    }
+
+    @keyframes spin-ring { to { transform: rotate(360deg); } }
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 20px rgba(92,191,173,0.08); }
+      50% { box-shadow: 0 0 40px rgba(92,191,173,0.15); }
+    }
+
+    .logo-icon {
+      font-size: 56px; font-weight: 900;
+      background: linear-gradient(135deg, var(--accent), var(--gold));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    h1 {
+      font-size: 56px; font-weight: 900;
+      letter-spacing: 4px;
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, var(--text-primary), var(--accent-light));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .tagline {
+      font-size: 18px; font-weight: 500;
+      color: var(--text-secondary);
+      letter-spacing: 2px; margin-bottom: 8px;
+    }
+
+    .version-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 16px; border-radius: 12px;
+      background: rgba(92,191,173,0.06);
+      border: 1px solid rgba(92,191,173,0.12);
+      margin-bottom: 40px;
+    }
+
+    .version-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--accent);
+    }
+
+    .version-badge span {
+      font-size: 12px; font-weight: 600;
+      color: var(--text-secondary); letter-spacing: 1px;
+    }
+
+    /* FEATURES */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px; margin-bottom: 48px;
+    }
+
+    .feature-card {
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      border-radius: 18px; padding: 24px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    }
+
+    .feature-icon {
+      width: 44px; height: 44px; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; margin-bottom: 14px;
+    }
+
+    .feature-card h3 { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+    .feature-card p { font-size: 12px; color: var(--text-secondary); line-height: 1.6; }
+
+    /* QR */
+    .qr-section {
+      text-align: center;
+      padding: 48px 0;
+    }
+
+    .qr-glass {
+      display: inline-flex; flex-direction: column;
+      align-items: center; gap: 16px;
+      padding: 32px; border-radius: 24px;
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+
+    .qr-placeholder {
+      width: 160px; height: 160px;
+      border-radius: 16px;
+      background: var(--surface);
+      border: 2px solid var(--glass-border);
+      display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+    }
+
+    .qr-placeholder::after {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        repeating-conic-gradient(var(--text-primary) 0% 25%, transparent 0% 50%) 0 0 / 20px 20px;
+      opacity: 0.06;
+    }
+
+    .qr-placeholder span {
+      font-size: 13px; color: var(--text-secondary);
+      position: relative; z-index: 1;
+    }
+
+    .qr-label {
+      font-size: 13px; color: var(--text-secondary); font-weight: 600;
+    }
+
+    /* CTA */
+    .cta-section {
+      text-align: center; padding: 24px 0 60px;
+    }
+
+    .store-buttons {
+      display: flex; gap: 12px;
+      justify-content: center; flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+
+    .store-btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 14px 28px; border-radius: 16px;
+      text-decoration: none; font-weight: 700;
+      font-size: 14px; transition: all 0.25s ease;
+      border: none; cursor: pointer;
+    }
+
+    .store-btn.ios {
+      background: linear-gradient(135deg, var(--accent), #2A6F97);
+      color: var(--bg);
+    }
+
+    .store-btn.android {
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      color: var(--text-primary);
+    }
+
+    .store-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
+    .store-btn svg { width: 20px; height: 20px; }
+
+    /* FOOTER */
+    .footer {
+      text-align: center; padding: 32px 0;
+      border-top: 1px solid var(--glass-border);
+    }
+
+    .footer-brand {
+      font-size: 20px; font-weight: 800;
+      background: linear-gradient(135deg, var(--accent), var(--gold));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text; margin-bottom: 8px;
+    }
+
+    .footer p { font-size: 11px; color: var(--text-secondary); }
+
+    @media (max-width: 480px) {
+      h1 { font-size: 40px; }
+      .tagline { font-size: 15px; }
+      .features { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-glow"></div>
+
+  <div class="container">
+    <section class="hero">
+      <div class="logo-ring">
+        <div class="logo-icon">ب</div>
+      </div>
+      <h1>بَيَان</h1>
+      <p class="tagline">صوتك يُسمع</p>
+      <div class="version-badge">
+        <div class="version-dot"></div>
+        <span>v2.0 Elite Edition</span>
+      </div>
+
+      <div class="features">
+        <div class="feature-card">
+          <div class="feature-icon" style="background:rgba(92,191,173,0.1);">🎙️</div>
+          <h3>ديوانيّات حيّة</h3>
+          <p>استمع وشارك في محادثات صوتية حيّة مع أعمق العقول</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon" style="background:rgba(212,175,55,0.1);">👑</div>
+          <h3>نادي السيادة</h3>
+          <p>عضوية حصرية للنخبة مع ميزات لا محدودة</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon" style="background:rgba(108,63,160,0.1);">🎨</div>
+          <h3>هوية بصرية</h3>
+          <p>ثيمات مخصصة لمجالسك: صحراء ملكية، واحة، أو مجلس عصري</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon" style="background:rgba(42,111,151,0.1);">🤖</div>
+          <h3>ذكاء اصطناعي</h3>
+          <p>تفريغ نصي فوري وملخصات ذكية لكل ديوانيّة</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="qr-section">
+      <div class="qr-glass">
+        <div class="qr-placeholder">
+          <span>QR Code</span>
+        </div>
+        <p class="qr-label">امسح للتحميل</p>
+      </div>
+    </section>
+
+    <section class="cta-section">
+      <div class="store-buttons">
+        <a href="#" class="store-btn ios">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+          App Store
+        </a>
+        <a href="#" class="store-btn android">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 20.5v-17c0-.83.52-1.28 1.23-.95l14.38 8.03c.8.45.8 1.39 0 1.84L4.23 20.45c-.71.33-1.23-.12-1.23-.95z"/></svg>
+          Google Play
+        </a>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="footer-brand">بَيَان</div>
+      <p>&copy; 2026 Bayan. All rights reserved.</p>
+    </footer>
+  </div>
+</body>
+</html>

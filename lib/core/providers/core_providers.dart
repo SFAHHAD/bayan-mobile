@@ -38,6 +38,7 @@ import 'package:bayan/core/services/reputation_service.dart';
 import 'package:bayan/core/services/bug_report_service.dart';
 import 'package:bayan/core/services/predictive_notification_service.dart';
 import 'package:bayan/core/services/rate_limiter_service.dart';
+import 'package:bayan/core/services/production_service.dart';
 
 final supabaseClientProvider = Provider<SupabaseClient>(
   (ref) => Supabase.instance.client,
@@ -200,4 +201,8 @@ final predictiveNotificationServiceProvider =
 
 final rateLimiterServiceProvider = Provider<RateLimiterService>(
   (ref) => RateLimiterService(ref.read(supabaseClientProvider)),
+);
+
+final productionServiceProvider = Provider<ProductionService>(
+  (ref) => ProductionService(ref.read(supabaseClientProvider)),
 );

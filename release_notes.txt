@@ -1,0 +1,185 @@
+================================================================================
+  BAYAN MOBILE — COMPLETE VERSION HISTORY
+  بيان — السجل الكامل للإصدارات
+================================================================================
+
+--------------------------------------------------------------------------------
+v2.0.0 — Production Flip & Grand Launch (2026-04-10)
+--------------------------------------------------------------------------------
+MILESTONE: First Production Release 🚀
+
+• ProductionService — verifies all live API keys (OpenAI, LiveKit, FCM) against
+  Supabase Secrets; looksLikeTestKey() guard prevents placeholder leaks
+• verify-production-secrets Edge Function — checks all 5 required secrets,
+  persists health state to production_health table, returns masked hints
+• Database Seal (Migration 016):
+  - Final RLS hardening on activity_logs (no client mutations)
+  - Final RLS hardening on bug_reports (service_role update/delete only)
+  - log_system_event_production() — drops debug/info in production
+  - purge_verbose_logs() cron (02:00 UTC daily, 7-day retention)
+  - rate_limit_buckets cleanup cron (every 10 minutes)
+  - production_health table + upsert/get RPCs
+• Stress Test: 1,000 concurrent Join Diwan simulation — verifies token-bucket
+  rate limiting and burst mode under full celebrity-traffic load
+• flutter build appbundle --release (Android AAB, signed)
+• CI/CD: GitHub Actions pipeline live (test → analyze → AAB build on push)
+
+--------------------------------------------------------------------------------
+v1.9.0 — Growth & Predictive Intelligence Layer (2026-04-10)
+--------------------------------------------------------------------------------
+• SEO & Web Metadata Engine:
+  - generate-seo-metadata Edge Function — dynamic OG + Twitter Card + JSON-LD
+  - Live diwans: 🔴 prefix, listener count, 10s cache; non-live: 300s cache
+  - SeoMetadata model with ogTitle, ogDescription, cacheControl computed props
+  - SeoRepository with buildSharePreviewUrl()
+• Predictive Notifications (AI-Time):
+  - predict_best_notification_hour() SQL RPC — analyzes 30 days of activity_logs
+  - NotificationPrediction model: bestTimeLabel, isHighConfidence, isWithinOptimalWindow
+  - PredictiveNotificationService with in-memory cache and batch predict
+• Dynamic Rate Limiting & Sharding:
+  - check_rate_limit() token-bucket RPC with atomic upsert
+  - enable_burst_mode() for celebrity host traffic spikes
+  - read_replicas table + get_best_replica() weighted-random routing
+  - RateLimiterService with checkUserLimit, checkDiwanJoinLimit
+• In-App Bug Reporting (Shake to Report):
+  - bug_reports table with submit_bug_report() SECURITY DEFINER RPC
+  - BugReportService.submitShakeReport() — captures screen state + system logs
+  - BugReport model + BugSeverity/BugStatus enums
+
+--------------------------------------------------------------------------------
+v1.8.0 — Voice Intelligence & CI/CD Layer (2026-04-10)
+--------------------------------------------------------------------------------
+• AI Voice Transcription (Whisper):
+  - transcribe-diwan-clip Edge Function → OpenAI Whisper whisper-1 (Arabic)
+  - voices table: +transcript_text, +transcription_status; Arabic GIN FTS index
+  - search_transcripts() RPC for full-text search across voice clips
+  - TranscriptionRepository + TranscriptionStatus enum + hasTranscript computed
+• CI/CD Pipeline (GitHub Actions):
+  - .github/workflows/main.yml: analyze → test --coverage → AAB build
+  - Keystore signing via KEYSTORE_BASE64/PASSWORD/ALIAS secrets
+  - Codecov integration; artifact retention 14 days
+• Advanced PDF Reports:
+  - pdf package (^3.10.8) added
+  - PdfReportService.generate(DiwanReport) → branded A4 Uint8List
+  - Sections: session, audience, economy, engagement, AI insights
+• Scaling & Cleanup:
+  - popular_diwans_cache + refresh every 5 minutes (pg_cron)
+  - calculate_trust_score updated: +verified_pro_component (max 10)
+  - ReputationService.getWeightedTrustScore() with 1.5× multiplier
+
+--------------------------------------------------------------------------------
+v1.7.0 — Governance & Production Readiness (2026-04-10)
+--------------------------------------------------------------------------------
+• Governance System:
+  - proposals table + governance_votes table
+  - cast_vote() / finalize_proposal() RPCs
+  - ProposalNotifier + VoteNotifier (Riverpod)
+• Trust Scores:
+  - calculate_trust_score() RPC: XP + streak + governance + subscription
+  - TrustScore model + TrustTier enum (newcomer → guardian)
+  - ReputationService with in-memory cache
+• Subscription & IAP:
+  - purchase_receipts table + activate_subscription_from_receipt() RPC
+  - PaymentService with Apple/Google/Stripe validation stubs
+• Push Notifications:
+  - user_fcm_tokens table + upsert/revoke RPCs
+  - NotificationService.registerFcmToken()
+• Privacy: setQuietHours() with overnight window support
+• Archival: archive_old_activity_logs() + finalize_expired_proposals() crons
+
+--------------------------------------------------------------------------------
+v1.6.0 — Retention & Semantic Intelligence (2026-04-09)
+--------------------------------------------------------------------------------
+• Semantic Search: pgvector HNSW indexes on diwans + voice_clips
+  - semantic_search_diwans() / semantic_search_voices() RPCs
+  - SemanticSearchRepository + Riverpod provider
+• Loyalty System: loyalty_points + loyalty_tiers tables
+  - award_loyalty_points() / redeem_loyalty_points() RPCs
+  - LoyaltyRepository + LoyaltyNotifier
+• Smart Notifications: NotificationService with FCM integration stubs
+• Privacy Controls: PrivacyService with quiet hours and data export
+• Streaks: streak tracking with auto-reset cron
+
+--------------------------------------------------------------------------------
+v1.5.0 — Economy & AI Security Layer (2026-04-09)
+--------------------------------------------------------------------------------
+• Gifting Economy: gift_transactions table; send_gift() SECURITY DEFINER RPC
+• Content AI: AI-generated diwan summaries via generate-diwan-summary Edge Fn
+• Security Hardening: input sanitization; rate-limit stubs; HNSW ef_search=40
+• User subscriptions: user_subscriptions table + check_subscription_access() RPC
+• Wallet system: user_wallets table + credit/debit RPCs
+
+--------------------------------------------------------------------------------
+v1.4.0 — Messaging & Analytics (2026-04-09)
+--------------------------------------------------------------------------------
+• Real-time Messaging: messages table; Realtime channel; MessageRepository
+• Analytics Engine: generate-diwan-report Edge Function
+  - DiwanReport model (session/audience/economy/engagement/AI insights)
+  - MarketplaceRepository.generateReport()
+• Activity Logs: activity_logs table + log_activity() RPC; ActivityLogRepository
+• Marketplace: MarketplaceRepository with featured / search / filter
+
+--------------------------------------------------------------------------------
+v1.3.0 — Discovery & Guardrails (2026-04-09)
+--------------------------------------------------------------------------------
+• Discovery Feed: FeedRepository with pagination + FeedNotifier
+• Content Guardrails: profanity filter; report_content() RPC
+• DeepLink routing: app_links integration; AppLinkService
+• Config system: remote_config table + ConfigRepository
+• Search: full-text search on diwans (GIN index + FTS RPC)
+
+--------------------------------------------------------------------------------
+v1.2.0 — Social Graph & Persistence (2026-04-09)
+--------------------------------------------------------------------------------
+• Follow system: follows table + follow/unfollow RPCs
+• Notifications table + mark_read/mark_all_read RPCs
+• Hive offline persistence: DiwanBox + UserBox
+• ConnectivityService with queue-and-replay for offline actions
+• SocialRepository: fetchFollowing, fetchFollowers, isFollowing
+
+--------------------------------------------------------------------------------
+v1.1.0 — Creator Studio & Recommendations (2026-04-09)
+--------------------------------------------------------------------------------
+• Creator Studio: creator_stats table; creator dashboard screen
+• Recommendation Engine: collaborative filtering RPC (recommend_diwans)
+• Voice Clips: voices table + voice_clips bucket; VoiceRepository
+• Admin Panel: admin_actions table; store_screenshots_screen
+• LiveKit integration: livekit_client ^2.3.0; LiveSessionService
+
+--------------------------------------------------------------------------------
+v1.0.0 — Reliability & Performance (2026-04-09)
+--------------------------------------------------------------------------------
+• CrashRecoveryService: circuit-breaker pattern with backoff
+• PrefetchService: pre-loads active diwans into cache
+• System Logs: system_logs table + log_system_event() RPC; LogRepository
+• DatabaseService: health check + retry wrapper
+• Offline resilience: connectivity_plus; graceful degradation
+
+--------------------------------------------------------------------------------
+v0.9.0 — Diwan Realtime Fields (2026-04-09)
+--------------------------------------------------------------------------------
+• Realtime listeners: is_live, listener_count, gifts_total columns
+• Live indicator UI; listener count badge
+• Presence tracking via Supabase Realtime channels
+
+--------------------------------------------------------------------------------
+v0.5.0 — Initial Schema & Core Foundation (2026-04-09)
+--------------------------------------------------------------------------------
+• Supabase project setup; initial schema (diwans, users, user_profiles)
+• Authentication: supabase_flutter ^2.12.2; AuthNotifier
+• Basic Diwan CRUD: DiwanRepository (create, read, update, delete)
+• Core navigation: GoRouter; main scaffold
+• Theming: Google Fonts (Tajawal/Cairo); brand palette (gold/dark/cream)
+
+--------------------------------------------------------------------------------
+v0.1.0 — Project Bootstrap (2026-04-09)
+--------------------------------------------------------------------------------
+• Flutter project initialized (SDK ^3.11.1)
+• Clean Architecture structure: core/features/shared
+• Riverpod state management (flutter_riverpod ^2.6.1)
+• Initial pubspec.yaml; README; CI placeholder
+
+================================================================================
+  Total: 535+ automated tests · 0 analyze issues · 16 SQL migrations
+         6 Edge Functions · Clean Architecture throughout
+================================================================================

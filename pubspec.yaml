@@ -1,7 +1,7 @@
 name: bayan
 description: "Bayan - Premium Arabic Content Platform"
 publish_to: 'none'
-version: 1.9.0+9
+version: 2.0.0+10
 
 environment:
   sdk: ^3.11.1
@@ -29,6 +29,21 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^6.0.0
   mocktail: ^1.0.4
+  flutter_launcher_icons: ^0.14.3
+
+flutter_launcher_icons:
+  android: "ic_launcher"
+  ios: true
+  image_path: "assets/Bayan.JPG"
+  adaptive_icon_background: "#0A0E1A"
+  adaptive_icon_foreground: "assets/Bayan.JPG"
+  min_sdk_android: 21
+  remove_alpha_ios: true
+  web:
+    generate: true
+    image_path: "assets/Bayan.JPG"
+    background_color: "#0A0E1A"
+    theme_color: "#5CBFAD"
 
 flutter:
   generate: true

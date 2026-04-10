@@ -57,7 +57,53 @@ const _templates = [
     gradient: [Color(0xFFD4AF37), Color(0xFF1E1035)],
     screenType: 'sovereign',
   ),
+  _ScreenshotTemplate(
+    title: 'بصمتك الصوتية',
+    titleEn: 'Your Voice Print',
+    description: 'هوية صوتية فريدة تمثّلك',
+    icon: Icons.graphic_eq_rounded,
+    gradient: [Color(0xFF2A6F97), Color(0xFF6C3FA0)],
+    screenType: 'voiceprint',
+  ),
 ];
+
+enum _DeviceFrame { iphone16Pro, android }
+
+class _DeviceSpec {
+  final String name;
+  final double width;
+  final double height;
+  final double cornerRadius;
+  final double bezelWidth;
+  final bool hasDynamicIsland;
+
+  const _DeviceSpec({
+    required this.name,
+    required this.width,
+    required this.height,
+    required this.cornerRadius,
+    required this.bezelWidth,
+    this.hasDynamicIsland = false,
+  });
+}
+
+const _deviceSpecs = {
+  _DeviceFrame.iphone16Pro: _DeviceSpec(
+    name: 'iPhone 16 Pro',
+    width: 240,
+    height: 520,
+    cornerRadius: 32,
+    bezelWidth: 3,
+    hasDynamicIsland: true,
+  ),
+  _DeviceFrame.android: _DeviceSpec(
+    name: 'Android',
+    width: 236,
+    height: 510,
+    cornerRadius: 22,
+    bezelWidth: 2.5,
+  ),
+};
 
 class StoreScreenshotsScreen extends StatefulWidget {
   const StoreScreenshotsScreen({super.key});
@@ -71,6 +117,7 @@ class _StoreScreenshotsScreenState extends State<StoreScreenshotsScreen>
   int _selectedTemplate = 0;
   bool _isArabic = true;
   bool _showVideoPreview = false;
+  _DeviceFrame _selectedDevice = _DeviceFrame.iphone16Pro;
   late final AnimationController _waveController;
 
   @override
@@ -188,115 +235,217 @@ class _StoreScreenshotsScreenState extends State<StoreScreenshotsScreen>
     );
   }
 
-  Widget _buildPreview() {
-    final tpl = _templates[_selectedTemplate];
-    return Center(
-      child: Container(
-        width: 240,
-        height: 480,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(28),
-          color: Colors.black,
-          border: Border.all(color: Colors.grey.shade800, width: 3),
-          boxShadow: [
-            BoxShadow(
-              color: tpl.gradient.first.withValues(alpha: 0.15),
-              blurRadius: 30,
-            ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(25),
-          child: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [tpl.gradient.first, BayanColors.background],
+  Widget _buildDeviceSelector() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: _DeviceFrame.values.map((d) {
+          final isSelected = _selectedDevice == d;
+          final spec = _deviceSpecs[d]!;
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: HapticButton(
+              hapticType: HapticFeedbackType.selection,
+              onTap: () {
+                HapticFeedback.selectionClick();
+                setState(() => _selectedDevice = d);
+              },
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: isSelected
+                      ? BayanColors.accent.withValues(alpha: 0.12)
+                      : BayanColors.glassBackground,
+                  border: Border.all(
+                    color: isSelected
+                        ? BayanColors.accent.withValues(alpha: 0.3)
+                        : BayanColors.glassBorder,
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      d == _DeviceFrame.iphone16Pro
+                          ? Icons.phone_iphone_rounded
+                          : Icons.phone_android_rounded,
+                      size: 14,
+                      color: isSelected
+                          ? BayanColors.accent
+                          : BayanColors.textSecondary,
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      spec.name,
+                      style: GoogleFonts.cairo(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        color: isSelected
+                            ? BayanColors.accent
+                            : BayanColors.textSecondary,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                children: [
-                  const SizedBox(height: 24),
-                  Container(
-                    width: 60,
-                    height: 60,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: LinearGradient(colors: tpl.gradient),
-                      boxShadow: [
-                        BoxShadow(
-                          color: tpl.gradient.first.withValues(alpha: 0.3),
-                          blurRadius: 16,
-                        ),
-                      ],
-                    ),
-                    child: Icon(
-                      tpl.icon,
-                      color: BayanColors.background,
-                      size: 30,
-                    ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  Widget _buildPreview() {
+    final tpl = _templates[_selectedTemplate];
+    final spec = _deviceSpecs[_selectedDevice]!;
+    return Column(
+      children: [
+        _buildDeviceSelector(),
+        Center(
+          child: Container(
+            width: spec.width,
+            height: spec.height,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(spec.cornerRadius),
+              color: Colors.black,
+              border: Border.all(
+                color: Colors.grey.shade800,
+                width: spec.bezelWidth,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: tpl.gradient.first.withValues(alpha: 0.15),
+                  blurRadius: 30,
+                ),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(
+                spec.cornerRadius - spec.bezelWidth,
+              ),
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [tpl.gradient.first, BayanColors.background],
                   ),
-                  const SizedBox(height: 20),
-                  Text(
-                    _isArabic ? tpl.title : tpl.titleEn,
-                    style: GoogleFonts.cairo(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w800,
-                      color: BayanColors.textPrimary,
+                ),
+                child: Stack(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        children: [
+                          SizedBox(height: spec.hasDynamicIsland ? 36 : 24),
+                          Container(
+                            width: 56,
+                            height: 56,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              gradient: LinearGradient(colors: tpl.gradient),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: tpl.gradient.first.withValues(
+                                    alpha: 0.3,
+                                  ),
+                                  blurRadius: 16,
+                                ),
+                              ],
+                            ),
+                            child: Icon(
+                              tpl.icon,
+                              color: BayanColors.background,
+                              size: 28,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            _isArabic ? tpl.title : tpl.titleEn,
+                            style: GoogleFonts.cairo(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w800,
+                              color: BayanColors.textPrimary,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            tpl.description,
+                            style: GoogleFonts.cairo(
+                              fontSize: 11,
+                              color: BayanColors.textSecondary,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          const Spacer(),
+                          _buildMockScreen(tpl),
+                          const Spacer(),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                width: 16,
+                                height: 16,
+                                decoration: const BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      BayanColors.accent,
+                                      Color(0xFFD4AF37),
+                                    ],
+                                  ),
+                                ),
+                                child: const Icon(
+                                  Icons.auto_awesome_rounded,
+                                  size: 9,
+                                  color: BayanColors.background,
+                                ),
+                              ),
+                              const SizedBox(width: 5),
+                              Text(
+                                'بَيَان',
+                                style: GoogleFonts.cairo(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w800,
+                                  color: BayanColors.textPrimary,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                        ],
+                      ),
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    tpl.description,
-                    style: GoogleFonts.cairo(
-                      fontSize: 12,
-                      color: BayanColors.textSecondary,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const Spacer(),
-                  _buildMockScreen(tpl),
-                  const Spacer(),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        width: 18,
-                        height: 18,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          gradient: const LinearGradient(
-                            colors: [BayanColors.accent, Color(0xFFD4AF37)],
+                    if (spec.hasDynamicIsland)
+                      Positioned(
+                        top: 10,
+                        left: 0,
+                        right: 0,
+                        child: Center(
+                          child: Container(
+                            width: 90,
+                            height: 24,
+                            decoration: BoxDecoration(
+                              color: Colors.black,
+                              borderRadius: BorderRadius.circular(14),
+                            ),
                           ),
                         ),
-                        child: const Icon(
-                          Icons.auto_awesome_rounded,
-                          size: 10,
-                          color: BayanColors.background,
-                        ),
                       ),
-                      const SizedBox(width: 6),
-                      Text(
-                        'بَيَان',
-                        style: GoogleFonts.cairo(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w800,
-                          color: BayanColors.textPrimary,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
         ),
-      ),
+      ],
     );
   }
 

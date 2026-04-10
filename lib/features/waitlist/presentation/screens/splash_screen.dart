@@ -29,6 +29,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   late final Animation<double> _titleFade;
   late final Animation<Offset> _titleSlide;
   late final Animation<double> _subtitleFade;
+  late final Animation<double> _versionFade;
   late final Animation<double> _glowPulse;
 
   @override
@@ -94,6 +95,13 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
       CurvedAnimation(
         parent: _contentController,
         curve: const Interval(0.65, 0.9, curve: Curves.easeOut),
+      ),
+    );
+
+    _versionFade = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _contentController,
+        curve: const Interval(0.82, 1.0, curve: Curves.easeOut),
       ),
     );
 
@@ -175,15 +183,76 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
             ),
           );
         },
-        child: Center(
-          child: Column(
+        child: Stack(
+          children: [
+            Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _buildLogoSection(),
+                  const SizedBox(height: 40),
+                  _buildTitle(),
+                  const SizedBox(height: 12),
+                  _buildSubtitle(),
+                ],
+              ),
+            ),
+            Positioned(
+              bottom: 48,
+              left: 0,
+              right: 0,
+              child: _buildVersionBadge(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildVersionBadge() {
+    return AnimatedBuilder(
+      animation: Listenable.merge([_contentController, _exitController]),
+      builder: (context, child) {
+        final fadeOut = 1.0 - (_exitController.value * 1.5).clamp(0.0, 1.0);
+        return Opacity(opacity: _versionFade.value * fadeOut, child: child);
+      },
+      child: Center(
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            color: BayanColors.accent.withValues(alpha: 0.06),
+            border: Border.all(
+              color: BayanColors.accent.withValues(alpha: 0.12),
+            ),
+          ),
+          child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              _buildLogoSection(),
-              const SizedBox(height: 40),
-              _buildTitle(),
-              const SizedBox(height: 12),
-              _buildSubtitle(),
+              Container(
+                width: 6,
+                height: 6,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: BayanColors.accent,
+                  boxShadow: [
+                    BoxShadow(
+                      color: BayanColors.accent.withValues(alpha: 0.4),
+                      blurRadius: 4,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                'v2.0 Elite Edition',
+                style: GoogleFonts.cairo(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: BayanColors.textSecondary,
+                  letterSpacing: 1.2,
+                ),
+              ),
             ],
           ),
         ),
