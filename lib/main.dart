@@ -36,7 +36,7 @@ void main() async {
 
   final sessionId = _generateSessionId();
   LogRepository.configure(
-    appVersion: '1.5.0',
+    appVersion: '1.7.0',
     platform: 'flutter',
     sessionId: sessionId,
   );
