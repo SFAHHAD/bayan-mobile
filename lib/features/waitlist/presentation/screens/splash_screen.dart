@@ -321,7 +321,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
         );
       },
       child: Text(
-        'بَيَان',
+        'بيان',
         style: GoogleFonts.cairo(
           fontSize: 48,
           fontWeight: FontWeight.w800,

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:bayan/core/theme/theme.dart';
@@ -22,7 +22,7 @@ class _OnboardingPage {
 const _pages = [
   _OnboardingPage(
     icon: Icons.auto_stories_rounded,
-    title: 'مرحباً ببَيَان',
+    title: 'مرحباً ببيان',
     subtitle:
         'منصة الديوانيّات الرقميّة الأولى\nمساحة عربية راقية للحوار والمعرفة',
     gradientAccent: [Color(0xFF5CBFAD), Color(0xFF2A6F97)],

@@ -119,7 +119,7 @@ class ConciergeScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'كونسيرج بَيَان',
+                  'كونسيرج بيان',
                   style: GoogleFonts.cairo(
                     fontSize: 22,
                     fontWeight: FontWeight.w800,

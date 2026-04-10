@@ -410,7 +410,7 @@ class _StoreScreenshotsScreenState extends State<StoreScreenshotsScreen>
                               ),
                               const SizedBox(width: 5),
                               Text(
-                                'بَيَان',
+                                'بيان',
                                 style: GoogleFonts.cairo(
                                   fontSize: 13,
                                   fontWeight: FontWeight.w800,

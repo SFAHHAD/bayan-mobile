@@ -173,7 +173,7 @@ class SovereignClubScreen extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            'تجربة بَيَان بلا حدود',
+            'تجربة بيان بلا حدود',
             style: GoogleFonts.cairo(
               fontSize: 15,
               color: BayanColors.textSecondary,

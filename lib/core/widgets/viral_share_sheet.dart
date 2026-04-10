@@ -271,7 +271,7 @@ class _ViralShareSheetState extends State<_ViralShareSheet>
                     ),
                     const SizedBox(width: 6),
                     Text(
-                      'بَيَان',
+                      'بيان',
                       style: GoogleFonts.cairo(
                         fontSize: 12,
                         fontWeight: FontWeight.w800,

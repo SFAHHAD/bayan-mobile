@@ -1,4 +1,4 @@
-import 'dart:math' as math;
+﻿import 'dart:math' as math;
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -134,7 +134,7 @@ class _AiSummaryCardState extends State<AiSummaryCard>
             Row(
               children: [
                 Text(
-                  'ملخص بَيَان الذكي',
+                  'ملخص بيان الذكي',
                   style: GoogleFonts.cairo(
                     fontSize: 12,
                     fontWeight: FontWeight.w700,

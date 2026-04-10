@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:bayan/core/theme/theme.dart';
@@ -160,7 +160,7 @@ class _LandingScreenState extends ConsumerState<LandingScreen>
 
   Widget _buildHeadline() {
     return Text(
-      'بَيَان',
+      'بيان',
       style: GoogleFonts.cairo(
         fontSize: 48,
         fontWeight: FontWeight.w800,

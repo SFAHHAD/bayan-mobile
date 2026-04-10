@@ -212,7 +212,7 @@ class _ShareStorySheet extends StatelessWidget {
                       ),
                       const SizedBox(width: 6),
                       Text(
-                        'استمع على بَيَان',
+                        'استمع على بيان',
                         style: GoogleFonts.cairo(
                           fontSize: 11,
                           fontWeight: FontWeight.w700,
@@ -243,7 +243,7 @@ class _ShareStorySheet extends StatelessWidget {
                     ),
                     const SizedBox(width: 6),
                     Text(
-                      'بَيَان',
+                      'بيان',
                       style: GoogleFonts.cairo(
                         fontSize: 12,
                         fontWeight: FontWeight.w800,

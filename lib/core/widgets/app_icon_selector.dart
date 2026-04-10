@@ -201,10 +201,20 @@ class _AppIconSelectorSheetState extends State<_AppIconSelectorSheet> {
                                   : null,
                             ),
                             child: Center(
-                              child: Icon(
-                                Icons.auto_awesome_rounded,
-                                color: opt.iconColor,
-                                size: 32,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(12),
+                                child: Image.asset(
+                                  'assets/Bayan.JPG',
+                                  width: 48,
+                                  height: 48,
+                                  fit: BoxFit.cover,
+                                  colorBlendMode: opt.name == 'dark'
+                                      ? BlendMode.saturation
+                                      : null,
+                                  color: opt.name == 'dark'
+                                      ? Colors.grey
+                                      : null,
+                                ),
                               ),
                             ),
                           ),

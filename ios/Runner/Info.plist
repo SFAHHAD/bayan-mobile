@@ -80,8 +80,8 @@
 		</dict>
 	</array>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>بَيَان يحتاج إلى الميكروفون للمشاركة في الديوانيّات الصوتية</string>
+	<string>\u0628\u064a\u0627\u0646 يحتاج إلى الميكروفون للمشاركة في الديوانيّات الصوتية</string>
 	<key>NSCameraUsageDescription</key>
-	<string>بَيَان قد يستخدم الكاميرا لبعض ميزات الديوانيّات</string>
+	<string>\u0628\u064a\u0627\u0646 قد يستخدم الكاميرا لبعض ميزات الديوانيّات</string>
 </dict>
 </plist>

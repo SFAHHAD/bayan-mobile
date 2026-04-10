@@ -447,16 +447,34 @@ class _SettingsCenterScreenState extends State<SettingsCenterScreen> {
                   children: [
                     _ControlTile(
                       icon: Icons.headset_mic_rounded,
-                      label: 'كونسيرج بَيَان',
+                      label: 'كونسيرج بيان',
                       iconColor: const Color(0xFFD4AF37),
                       showDivider: true,
                       onTap: () => _pushScreen(const ConciergeScreen()),
                     ),
                     _ControlTile(
                       icon: Icons.info_outline_rounded,
-                      label: 'عن بَيَان',
+                      label: 'عن بيان',
                       showDivider: false,
-                      onTap: () => HapticFeedback.selectionClick(),
+                      onTap: () {
+                        HapticFeedback.selectionClick();
+                        showAboutDialog(
+                          context: context,
+                          applicationName: 'بيان',
+                          applicationVersion: 'v2.0 Elite Edition',
+                          applicationIcon: ClipRRect(
+                            borderRadius: BorderRadius.circular(14),
+                            child: Image.asset(
+                              'assets/Bayan.JPG',
+                              width: 56,
+                              height: 56,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          applicationLegalese:
+                              '© 2026 Bayan. All rights reserved.',
+                        );
+                      },
                     ),
                   ],
                 ),

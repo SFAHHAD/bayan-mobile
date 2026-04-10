@@ -209,7 +209,7 @@ class _GovernanceScreenState extends State<GovernanceScreen> {
                         ),
                       ),
                       Text(
-                        'شارك في تشكيل مستقبل بَيَان من خلال التصويت على المقترحات',
+                        'شارك في تشكيل مستقبل بيان من خلال التصويت على المقترحات',
                         style: GoogleFonts.cairo(
                           fontSize: 11,
                           color: BayanColors.textSecondary,

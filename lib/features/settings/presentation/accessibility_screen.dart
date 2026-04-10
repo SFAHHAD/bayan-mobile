@@ -324,7 +324,7 @@ class _AccessibilityScreenState extends State<AccessibilityScreen> {
                       ),
                     ),
                     Text(
-                      'بَيَان يدعم VoiceOver و TalkBack بالكامل',
+                      'بيان يدعم VoiceOver و TalkBack بالكامل',
                       style: GoogleFonts.cairo(
                         fontSize: 11,
                         color: BayanColors.textSecondary,

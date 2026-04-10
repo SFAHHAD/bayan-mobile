@@ -887,7 +887,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                 ),
                 _SettingsTile(
                   icon: Icons.info_outline_rounded,
-                  label: 'عن بَيَان',
+                  label: 'عن بيان',
                   showDivider: false,
                 ),
               ],

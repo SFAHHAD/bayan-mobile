@@ -1,4 +1,4 @@
-import 'dart:ui';
+﻿import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -153,7 +153,7 @@ class WalletTab extends StatelessWidget {
                   ),
                   const SizedBox(width: 12),
                   Text(
-                    'رصيد بَيَان',
+                    'رصيد بيان',
                     style: GoogleFonts.cairo(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,

@@ -1,4 +1,4 @@
-import 'dart:ui';
+﻿import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -150,7 +150,7 @@ class _InvitationScreenState extends ConsumerState<InvitationScreen>
         ),
         const SizedBox(height: 10),
         Text(
-          'بَيَان منصة حصرية بدعوة فقط\nأدخل رمز الدعوة للمتابعة',
+          'بيان منصة حصرية بدعوة فقط\nأدخل رمز الدعوة للمتابعة',
           style: GoogleFonts.cairo(
             fontSize: 15,
             color: BayanColors.textSecondary,
@@ -284,7 +284,7 @@ class _InvitationScreenState extends ConsumerState<InvitationScreen>
 
   Widget _buildFooter() {
     return Text(
-      'لا تملك رمزاً؟ اطلب من أحد أعضاء بَيَان دعوتك',
+      'لا تملك رمزاً؟ اطلب من أحد أعضاء بيان دعوتك',
       style: GoogleFonts.cairo(
         fontSize: 13,
         color: BayanColors.textSecondary.withValues(alpha: 0.6),
