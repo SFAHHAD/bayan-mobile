@@ -18,6 +18,7 @@ import 'package:bayan/core/widgets/bayan_refresh_indicator.dart';
 import 'package:bayan/core/widgets/ai_summary_card.dart';
 import 'package:bayan/core/widgets/for_you_feed.dart';
 import 'package:bayan/core/widgets/live_event_banner.dart';
+import 'package:bayan/core/widgets/predictive_feed.dart';
 
 class _DiwanData {
   final String id;
@@ -265,6 +266,9 @@ class _DiwanFeedScreenState extends ConsumerState<DiwanFeedScreen>
                           slivers: [
                             SliverToBoxAdapter(
                               child: _buildLiveIndicator(diwans),
+                            ),
+                            const SliverToBoxAdapter(
+                              child: PredictiveFeedSection(),
                             ),
                             SliverToBoxAdapter(child: _buildAiSummary()),
                             SliverToBoxAdapter(child: _buildTopVoices()),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:bayan/core/theme/theme.dart';
+import 'package:bayan/core/widgets/shake_to_report.dart';
 import 'package:bayan/features/diwan/presentation/diwan_feed_screen.dart';
 import 'package:bayan/features/search/presentation/search_screen.dart';
 import 'package:bayan/features/schedule/presentation/schedule_hub_screen.dart';
@@ -15,8 +16,9 @@ class MainShell extends StatefulWidget {
   State<MainShell> createState() => _MainShellState();
 }
 
-class _MainShellState extends State<MainShell> {
+class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
   int _currentIndex = 0;
+  DateTime? _lastShakeTime;
 
   final _screens = const [
     DiwanFeedScreen(),
@@ -24,6 +26,28 @@ class _MainShellState extends State<MainShell> {
     ScheduleHubScreen(),
     ProfileScreen(),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  void triggerShakeReport() {
+    final now = DateTime.now();
+    if (_lastShakeTime != null &&
+        now.difference(_lastShakeTime!).inSeconds < 3) {
+      return;
+    }
+    _lastShakeTime = now;
+    showShakeReport(context);
+  }
 
   void _onTabTap(int index) {
     if (index == _currentIndex) return;

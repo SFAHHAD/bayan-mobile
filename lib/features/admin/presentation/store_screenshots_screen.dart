@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -65,9 +66,27 @@ class StoreScreenshotsScreen extends StatefulWidget {
   State<StoreScreenshotsScreen> createState() => _StoreScreenshotsScreenState();
 }
 
-class _StoreScreenshotsScreenState extends State<StoreScreenshotsScreen> {
+class _StoreScreenshotsScreenState extends State<StoreScreenshotsScreen>
+    with SingleTickerProviderStateMixin {
   int _selectedTemplate = 0;
   bool _isArabic = true;
+  bool _showVideoPreview = false;
+  late final AnimationController _waveController;
+
+  @override
+  void initState() {
+    super.initState();
+    _waveController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _waveController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -83,6 +102,12 @@ class _StoreScreenshotsScreenState extends State<StoreScreenshotsScreen> {
                 child: Column(
                   children: [
                     _buildPreview(),
+                    const SizedBox(height: 16),
+                    _buildVideoToggle(),
+                    if (_showVideoPreview) ...[
+                      const SizedBox(height: 16),
+                      _buildVideoPreview(),
+                    ],
                     const SizedBox(height: 20),
                     _buildLanguageToggle(),
                     const SizedBox(height: 16),
@@ -337,6 +362,183 @@ class _StoreScreenshotsScreenState extends State<StoreScreenshotsScreen> {
     );
   }
 
+  Widget _buildVideoToggle() {
+    return HapticButton(
+      hapticType: HapticFeedbackType.selection,
+      onTap: () {
+        HapticFeedback.selectionClick();
+        setState(() => _showVideoPreview = !_showVideoPreview);
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 250),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(14),
+          color: _showVideoPreview
+              ? BayanColors.accent.withValues(alpha: 0.1)
+              : BayanColors.glassBackground,
+          border: Border.all(
+            color: _showVideoPreview
+                ? BayanColors.accent.withValues(alpha: 0.3)
+                : BayanColors.glassBorder,
+          ),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              Icons.play_circle_rounded,
+              color: _showVideoPreview
+                  ? BayanColors.accent
+                  : BayanColors.textSecondary,
+              size: 20,
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                'معاينة الفيديو التسويقي',
+                style: GoogleFonts.cairo(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                  color: _showVideoPreview
+                      ? BayanColors.accent
+                      : BayanColors.textPrimary,
+                ),
+              ),
+            ),
+            AnimatedRotation(
+              turns: _showVideoPreview ? 0.25 : 0,
+              duration: const Duration(milliseconds: 250),
+              child: Icon(
+                Icons.chevron_left_rounded,
+                color: BayanColors.textSecondary,
+                size: 20,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildVideoPreview() {
+    return AnimatedBuilder(
+      animation: _waveController,
+      builder: (context, _) {
+        return Container(
+          height: 180,
+          width: double.infinity,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(18),
+            color: BayanColors.glassBackground,
+            border: Border.all(color: BayanColors.glassBorder),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(18),
+            child: Stack(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        _templates[_selectedTemplate].gradient.first.withValues(
+                          alpha: 0.15,
+                        ),
+                        BayanColors.background.withValues(alpha: 0.5),
+                      ],
+                    ),
+                  ),
+                ),
+                Positioned.fill(
+                  child: CustomPaint(
+                    painter: _WavePreviewPainter(
+                      progress: _waveController.value,
+                      color: _templates[_selectedTemplate].gradient.first,
+                    ),
+                  ),
+                ),
+                Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: 48,
+                        height: 48,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: BayanColors.background.withValues(alpha: 0.7),
+                          border: Border.all(
+                            color: BayanColors.accent.withValues(alpha: 0.4),
+                          ),
+                        ),
+                        child: const Icon(
+                          Icons.play_arrow_rounded,
+                          color: BayanColors.accent,
+                          size: 28,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'معاينة الموجات الحيّة · ١٠ ثوانٍ',
+                        style: GoogleFonts.cairo(
+                          fontSize: 11,
+                          color: BayanColors.textSecondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Positioned(
+                  top: 10,
+                  left: 10,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 3,
+                    ),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(6),
+                      color: Colors.redAccent.withValues(alpha: 0.15),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: 6,
+                          height: 6,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.redAccent,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.redAccent.withValues(alpha: 0.5),
+                                blurRadius: 4,
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          'LOOP',
+                          style: GoogleFonts.cairo(
+                            fontSize: 9,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.redAccent,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   Widget _buildLanguageToggle() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -511,4 +713,46 @@ class _LangChip extends StatelessWidget {
       ),
     );
   }
+}
+
+class _WavePreviewPainter extends CustomPainter {
+  final double progress;
+  final Color color;
+
+  _WavePreviewPainter({required this.progress, required this.color});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final centerY = size.height * 0.5;
+    const barCount = 40;
+    final barWidth = size.width / (barCount * 1.8);
+    final spacing = size.width / barCount;
+
+    for (int i = 0; i < barCount; i++) {
+      final phase = (i / barCount + progress) * 2 * math.pi;
+      final amplitude =
+          (math.sin(phase) * 0.5 + math.sin(phase * 2.3 + 1.2) * 0.3).abs();
+      final barHeight = 10 + amplitude * size.height * 0.35;
+      final alpha = 0.15 + amplitude * 0.35;
+
+      final paint = Paint()
+        ..color = color.withValues(alpha: alpha)
+        ..style = PaintingStyle.fill;
+
+      final x = i * spacing + spacing * 0.3;
+      final rRect = RRect.fromRectAndRadius(
+        Rect.fromCenter(
+          center: Offset(x, centerY),
+          width: barWidth,
+          height: barHeight,
+        ),
+        Radius.circular(barWidth / 2),
+      );
+      canvas.drawRRect(rRect, paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _WavePreviewPainter oldDelegate) =>
+      oldDelegate.progress != progress;
 }

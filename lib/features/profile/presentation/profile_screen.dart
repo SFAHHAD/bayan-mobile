@@ -23,6 +23,7 @@ import 'package:bayan/core/widgets/voice_print.dart';
 import 'package:bayan/features/subscription/presentation/sovereign_club_screen.dart';
 import 'package:bayan/features/governance/presentation/governance_screen.dart';
 import 'package:bayan/core/widgets/share_story_sheet.dart';
+import 'package:bayan/core/widgets/viral_share_sheet.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -533,6 +534,54 @@ class _ProfileScreenState extends State<ProfileScreen>
                           fontSize: 11,
                           fontWeight: FontWeight.w700,
                           color: BayanColors.accent,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              HapticButton(
+                hapticType: HapticFeedbackType.heavy,
+                onTap: () => showViralShareSheet(
+                  context,
+                  userName: 'عبدالله الكندري',
+                  handle: '@abdullahk',
+                  trustScore: 0.82,
+                  diwanName: 'ديوان الشعر الحديث',
+                ),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    gradient: LinearGradient(
+                      colors: [
+                        const Color(0xFFD4AF37).withValues(alpha: 0.15),
+                        BayanColors.accent.withValues(alpha: 0.1),
+                      ],
+                    ),
+                    border: Border.all(
+                      color: const Color(0xFFD4AF37).withValues(alpha: 0.3),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(
+                        Icons.rocket_launch_rounded,
+                        color: Color(0xFFD4AF37),
+                        size: 14,
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        'ادعُ',
+                        style: GoogleFonts.cairo(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w700,
+                          color: const Color(0xFFD4AF37),
                         ),
                       ),
                     ],

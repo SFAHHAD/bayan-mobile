@@ -168,6 +168,13 @@ class _LiveTranscriptViewState extends State<LiveTranscriptView>
               final isPast = currentTime >= word.endTime;
               final isCurrent =
                   currentTime >= word.startTime && currentTime < word.endTime;
+              final isUpcoming = currentTime < word.startTime;
+              final fadeProgress = isUpcoming
+                  ? ((currentTime - (word.startTime - 0.6)) / 0.6).clamp(
+                      0.0,
+                      1.0,
+                    )
+                  : 1.0;
               return AnimatedContainer(
                 duration: const Duration(milliseconds: 150),
                 padding: isCurrent
@@ -179,8 +186,8 @@ class _LiveTranscriptViewState extends State<LiveTranscriptView>
                         borderRadius: BorderRadius.circular(4),
                       )
                     : null,
-                child: Text(
-                  word.text,
+                child: AnimatedDefaultTextStyle(
+                  duration: const Duration(milliseconds: 200),
                   style: GoogleFonts.cairo(
                     fontSize: 16,
                     fontWeight: isCurrent ? FontWeight.w700 : FontWeight.w500,
@@ -188,8 +195,14 @@ class _LiveTranscriptViewState extends State<LiveTranscriptView>
                         ? BayanColors.accent
                         : isPast
                         ? BayanColors.textPrimary
-                        : BayanColors.textSecondary.withValues(alpha: 0.5),
+                        : BayanColors.textSecondary.withValues(
+                            alpha: 0.15 + fadeProgress * 0.35,
+                          ),
                     height: 1.8,
+                  ),
+                  child: Transform.translate(
+                    offset: Offset(0, isUpcoming ? 2 * (1 - fadeProgress) : 0),
+                    child: Text(word.text),
                   ),
                 ),
               );

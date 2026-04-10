@@ -31,8 +31,13 @@ import 'package:bayan/core/services/crash_recovery_service.dart';
 import 'package:bayan/core/services/payment_service.dart';
 import 'package:bayan/core/services/prefetch_service.dart';
 import 'package:bayan/core/repositories/transcription_repository.dart';
+import 'package:bayan/core/repositories/bug_report_repository.dart';
+import 'package:bayan/core/repositories/seo_repository.dart';
 import 'package:bayan/core/services/pdf_report_service.dart';
 import 'package:bayan/core/services/reputation_service.dart';
+import 'package:bayan/core/services/bug_report_service.dart';
+import 'package:bayan/core/services/predictive_notification_service.dart';
+import 'package:bayan/core/services/rate_limiter_service.dart';
 
 final supabaseClientProvider = Provider<SupabaseClient>(
   (ref) => Supabase.instance.client,
@@ -171,4 +176,28 @@ final transcriptionRepositoryProvider = Provider<TranscriptionRepository>(
 
 final pdfReportServiceProvider = Provider<PdfReportService>(
   (_) => PdfReportService(),
+);
+
+final bugReportRepositoryProvider = Provider<BugReportRepository>(
+  (ref) => BugReportRepository(ref.read(supabaseClientProvider)),
+);
+
+final seoRepositoryProvider = Provider<SeoRepository>(
+  (ref) => SeoRepository(ref.read(supabaseClientProvider)),
+);
+
+final bugReportServiceProvider = Provider<BugReportService>(
+  (ref) => BugReportService(
+    ref.read(bugReportRepositoryProvider),
+    ref.read(logRepositoryProvider),
+  ),
+);
+
+final predictiveNotificationServiceProvider =
+    Provider<PredictiveNotificationService>(
+      (ref) => PredictiveNotificationService(ref.read(supabaseClientProvider)),
+    );
+
+final rateLimiterServiceProvider = Provider<RateLimiterService>(
+  (ref) => RateLimiterService(ref.read(supabaseClientProvider)),
 );

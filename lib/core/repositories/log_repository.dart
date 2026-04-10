@@ -31,6 +31,10 @@ class LogRepository {
     _sessionId = sessionId;
   }
 
+  static String get appVersion => _appVersion;
+  static String get platform => _platform;
+  static String? get currentSessionId => _sessionId;
+
   // -------------------------------------------------------------------------
   // Flutter global error hooks
   // -------------------------------------------------------------------------
