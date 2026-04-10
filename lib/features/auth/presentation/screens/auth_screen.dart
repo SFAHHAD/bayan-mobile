@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:bayan/core/theme/theme.dart';
 import 'package:bayan/core/widgets/glassmorphic_container.dart';
 import 'package:bayan/features/auth/presentation/providers/auth_provider.dart';
+import 'package:bayan/features/auth/presentation/providers/invitation_provider.dart';
 import 'package:bayan/features/shell/presentation/main_shell.dart';
 
 enum _AuthStep { email, otp }
@@ -66,6 +67,11 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
     if (!ok) {
       _showError(ref.read(userProvider).errorMessage ?? 'خطأ في التحقق');
     } else {
+      final userId = ref.read(authRepositoryProvider).currentUser?.id;
+      if (userId != null) {
+        await ref.read(invitationProvider.notifier).redeemCode(userId);
+      }
+      if (!mounted) return;
       Navigator.of(
         context,
       ).pushReplacement(MaterialPageRoute(builder: (_) => const MainShell()));

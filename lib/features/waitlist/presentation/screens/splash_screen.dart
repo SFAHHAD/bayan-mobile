@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bayan/core/theme/theme.dart';
 import 'package:bayan/core/widgets/glassmorphic_container.dart';
 import 'package:bayan/features/auth/presentation/providers/auth_provider.dart';
+import 'package:bayan/features/auth/presentation/screens/invitation_screen.dart';
 import 'package:bayan/features/onboarding/presentation/onboarding_screen.dart';
 import 'package:bayan/features/shell/presentation/main_shell.dart';
 
@@ -71,7 +72,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
             onComplete: () {
               Navigator.of(context).pushReplacement(
                 PageRouteBuilder(
-                  pageBuilder: (context, a1, a2) => const MainShell(),
+                  pageBuilder: (context, a1, a2) => const InvitationScreen(),
                   transitionDuration: const Duration(milliseconds: 600),
                   transitionsBuilder: (context, animation, _, child) {
                     return FadeTransition(opacity: animation, child: child);

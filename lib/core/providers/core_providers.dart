@@ -3,6 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:bayan/core/services/database_service.dart';
 import 'package:bayan/core/repositories/diwan_repository.dart';
 import 'package:bayan/core/repositories/message_repository.dart';
+import 'package:bayan/core/repositories/participant_repository.dart';
 import 'package:bayan/core/repositories/profile_repository.dart';
 
 final supabaseClientProvider = Provider<SupabaseClient>(
@@ -23,4 +24,8 @@ final messageRepositoryProvider = Provider<MessageRepository>(
 
 final profileRepositoryProvider = Provider<ProfileRepository>(
   (ref) => ProfileRepository(ref.read(supabaseClientProvider)),
+);
+
+final participantRepositoryProvider = Provider<ParticipantRepository>(
+  (ref) => ParticipantRepository(ref.read(supabaseClientProvider)),
 );

@@ -6,6 +6,7 @@ import 'package:bayan/core/theme/theme.dart';
 import 'package:bayan/core/widgets/glassmorphic_container.dart';
 import 'package:bayan/core/widgets/pulsing_dot.dart';
 import 'package:bayan/core/widgets/haptic_button.dart';
+import 'package:bayan/features/stage/presentation/diwan_stage_screen.dart';
 
 class DiwanDetailScreen extends StatefulWidget {
   final String heroTag;
@@ -61,6 +62,31 @@ class _DiwanDetailScreenState extends State<DiwanDetailScreen>
     Future.delayed(const Duration(milliseconds: 300), () {
       if (mounted) _contentController.forward();
     });
+  }
+
+  void _enterStage() {
+    Navigator.of(context).push(
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            DiwanStageScreen(
+              diwanName: widget.name,
+              hostName: widget.host,
+              currentUserRole: StageRole.listener,
+            ),
+        transitionDuration: const Duration(milliseconds: 450),
+        reverseTransitionDuration: const Duration(milliseconds: 350),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          final slideUp =
+              Tween<Offset>(
+                begin: const Offset(0, 1),
+                end: Offset.zero,
+              ).animate(
+                CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
+              );
+          return SlideTransition(position: slideUp, child: child);
+        },
+      ),
+    );
   }
 
   @override
@@ -425,6 +451,7 @@ class _DiwanDetailScreenState extends State<DiwanDetailScreen>
               hapticType: HapticFeedbackType.medium,
               onTap: () {
                 HapticFeedback.mediumImpact();
+                if (widget.isLive) _enterStage();
               },
               child: Container(
                 width: double.infinity,

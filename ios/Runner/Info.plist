@@ -66,5 +66,9 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>بَيَان يحتاج إلى الميكروفون للمشاركة في الديوانيّات الصوتية</string>
+	<key>NSCameraUsageDescription</key>
+	<string>بَيَان قد يستخدم الكاميرا لبعض ميزات الديوانيّات</string>
 </dict>
 </plist>
