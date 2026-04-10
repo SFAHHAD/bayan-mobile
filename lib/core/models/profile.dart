@@ -5,6 +5,9 @@ class Profile {
   final String? bio;
   final String? avatarUrl;
   final bool isFounder;
+  final bool isVerified;
+  final String? professionalTitle;
+  final String? verifiedCategory;
   final int followerCount;
   final int followingCount;
   final int voiceCount;
@@ -17,6 +20,9 @@ class Profile {
     this.bio,
     this.avatarUrl,
     this.isFounder = false,
+    this.isVerified = false,
+    this.professionalTitle,
+    this.verifiedCategory,
     this.followerCount = 0,
     this.followingCount = 0,
     this.voiceCount = 0,
@@ -31,6 +37,9 @@ class Profile {
       bio: map['bio'] as String?,
       avatarUrl: map['avatar_url'] as String?,
       isFounder: (map['is_founder'] as bool?) ?? false,
+      isVerified: (map['is_verified'] as bool?) ?? false,
+      professionalTitle: map['professional_title'] as String?,
+      verifiedCategory: map['verified_category'] as String?,
       followerCount: (map['follower_count'] as int?) ?? 0,
       followingCount: (map['following_count'] as int?) ?? 0,
       voiceCount: (map['voice_count'] as int?) ?? 0,
@@ -54,6 +63,9 @@ class Profile {
     String? bio,
     String? avatarUrl,
     bool? isFounder,
+    bool? isVerified,
+    String? professionalTitle,
+    String? verifiedCategory,
     int? followerCount,
     int? followingCount,
     int? voiceCount,
@@ -66,6 +78,9 @@ class Profile {
       bio: bio ?? this.bio,
       avatarUrl: avatarUrl ?? this.avatarUrl,
       isFounder: isFounder ?? this.isFounder,
+      isVerified: isVerified ?? this.isVerified,
+      professionalTitle: professionalTitle ?? this.professionalTitle,
+      verifiedCategory: verifiedCategory ?? this.verifiedCategory,
       followerCount: followerCount ?? this.followerCount,
       followingCount: followingCount ?? this.followingCount,
       voiceCount: voiceCount ?? this.voiceCount,

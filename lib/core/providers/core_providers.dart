@@ -16,6 +16,8 @@ import 'package:bayan/core/repositories/voice_repository.dart';
 import 'package:bayan/core/repositories/poll_repository.dart';
 import 'package:bayan/core/repositories/question_repository.dart';
 import 'package:bayan/core/repositories/referral_repository.dart';
+import 'package:bayan/core/repositories/marketplace_repository.dart';
+import 'package:bayan/core/repositories/verification_repository.dart';
 
 final supabaseClientProvider = Provider<SupabaseClient>(
   (ref) => Supabase.instance.client,
@@ -83,4 +85,12 @@ final questionRepositoryProvider = Provider<QuestionRepository>(
 
 final referralRepositoryProvider = Provider<ReferralRepository>(
   (ref) => ReferralRepository(ref.read(supabaseClientProvider)),
+);
+
+final marketplaceRepositoryProvider = Provider<MarketplaceRepository>(
+  (ref) => MarketplaceRepository(ref.read(supabaseClientProvider)),
+);
+
+final verificationRepositoryProvider = Provider<VerificationRepository>(
+  (ref) => VerificationRepository(ref.read(supabaseClientProvider)),
 );

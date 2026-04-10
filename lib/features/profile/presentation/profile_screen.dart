@@ -13,6 +13,8 @@ import 'package:bayan/core/widgets/elite_avatar_badge.dart';
 import 'package:bayan/core/widgets/insights_charts.dart';
 import 'package:bayan/core/widgets/wallet_tab.dart';
 import 'package:bayan/features/referral/presentation/referral_hub_screen.dart';
+import 'package:bayan/features/verification/presentation/verification_screen.dart';
+import 'package:bayan/core/widgets/premium_ticket.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -506,6 +508,43 @@ class _ProfileScreenState extends State<ProfileScreen>
                   showDivider: true,
                 ),
                 _SettingsTile(
+                  icon: Icons.verified_rounded,
+                  label: 'طلب التوثيق',
+                  iconColor: const Color(0xFF2A6F97),
+                  showDivider: true,
+                  onTap: () {
+                    HapticFeedback.selectionClick();
+                    Navigator.of(context).push(
+                      PageRouteBuilder(
+                        pageBuilder: (context, a, b) =>
+                            const VerificationScreen(),
+                        transitionDuration: const Duration(milliseconds: 400),
+                        transitionsBuilder: (context, animation, _, child) {
+                          return FadeTransition(
+                            opacity: animation,
+                            child: child,
+                          );
+                        },
+                      ),
+                    );
+                  },
+                ),
+                _SettingsTile(
+                  icon: Icons.confirmation_num_rounded,
+                  label: 'تذاكري',
+                  iconColor: BayanColors.accent,
+                  showDivider: true,
+                  onTap: () {
+                    HapticFeedback.selectionClick();
+                    showModalBottomSheet(
+                      context: context,
+                      backgroundColor: Colors.transparent,
+                      isScrollControlled: true,
+                      builder: (_) => _TicketWalletSheet(),
+                    );
+                  },
+                ),
+                _SettingsTile(
                   icon: Icons.lock_outline_rounded,
                   label: 'الخصوصية والأمان',
                   showDivider: true,
@@ -803,6 +842,90 @@ class _VoiceGalleryCardState extends State<_VoiceGalleryCard>
                 ),
               ],
             ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _TicketWalletSheet extends StatelessWidget {
+  final _tickets = const [
+    TicketData(
+      diwanName: 'ملتقى الشعر الخليجي',
+      hostName: 'عبدالله المطيري',
+      date: '١٥ أبريل',
+      time: '٩:٠٠ م',
+      price: 100,
+      ticketId: 'BYN-TK-7842',
+    ),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
+        child: Container(
+          height: MediaQuery.of(context).size.height * 0.65,
+          decoration: BoxDecoration(
+            color: BayanColors.surface.withValues(alpha: 0.96),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+            border: Border(
+              top: BorderSide(
+                color: BayanColors.glassBorder.withValues(alpha: 0.5),
+              ),
+            ),
+          ),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 12, bottom: 8),
+                child: Container(
+                  width: 36,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: BayanColors.glassBorder,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 8,
+                ),
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.confirmation_num_rounded,
+                      color: BayanColors.accent,
+                      size: 22,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      'تذاكري',
+                      style: GoogleFonts.cairo(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w800,
+                        color: BayanColors.textPrimary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: _tickets.isEmpty
+                    ? const TicketWalletEmptyState()
+                    : ListView.builder(
+                        padding: const EdgeInsets.only(bottom: 24),
+                        itemCount: _tickets.length,
+                        itemBuilder: (context, i) =>
+                            PremiumTicketCard(ticket: _tickets[i]),
+                      ),
+              ),
+            ],
           ),
         ),
       ),

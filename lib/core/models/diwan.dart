@@ -9,6 +9,9 @@ class Diwan {
   final int listenerCount;
   final int voiceCount;
   final String? coverUrl;
+  final int entryFee;
+  final bool isPremium;
+  final String moderationStatus;
   final DateTime? lastActivityAt;
   final DateTime createdAt;
   final DateTime updatedAt;
@@ -24,6 +27,9 @@ class Diwan {
     this.listenerCount = 0,
     this.voiceCount = 0,
     this.coverUrl,
+    this.entryFee = 0,
+    this.isPremium = false,
+    this.moderationStatus = 'approved',
     this.lastActivityAt,
     required this.createdAt,
     required this.updatedAt,
@@ -41,6 +47,9 @@ class Diwan {
       listenerCount: (map['listener_count'] as int?) ?? 0,
       voiceCount: (map['voice_count'] as int?) ?? 0,
       coverUrl: map['cover_url'] as String?,
+      entryFee: (map['entry_fee'] as int?) ?? 0,
+      isPremium: (map['is_premium'] as bool?) ?? false,
+      moderationStatus: (map['moderation_status'] as String?) ?? 'approved',
       lastActivityAt: map['last_activity_at'] != null
           ? DateTime.parse(map['last_activity_at'] as String)
           : null,
@@ -60,6 +69,9 @@ class Diwan {
       'listener_count': listenerCount,
       'voice_count': voiceCount,
       'cover_url': coverUrl,
+      'entry_fee': entryFee,
+      'is_premium': isPremium,
+      'moderation_status': moderationStatus,
     };
   }
 
@@ -74,6 +86,9 @@ class Diwan {
     int? listenerCount,
     int? voiceCount,
     String? coverUrl,
+    int? entryFee,
+    bool? isPremium,
+    String? moderationStatus,
     DateTime? lastActivityAt,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -89,6 +104,9 @@ class Diwan {
       listenerCount: listenerCount ?? this.listenerCount,
       voiceCount: voiceCount ?? this.voiceCount,
       coverUrl: coverUrl ?? this.coverUrl,
+      entryFee: entryFee ?? this.entryFee,
+      isPremium: isPremium ?? this.isPremium,
+      moderationStatus: moderationStatus ?? this.moderationStatus,
       lastActivityAt: lastActivityAt ?? this.lastActivityAt,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,

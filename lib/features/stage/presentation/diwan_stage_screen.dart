@@ -17,6 +17,7 @@ import 'package:bayan/core/widgets/live_poll_overlay.dart';
 import 'package:bayan/core/widgets/qa_panel.dart';
 import 'package:bayan/core/widgets/audio_settings_panel.dart';
 import 'package:bayan/core/widgets/engagement_effects.dart';
+import 'package:bayan/core/widgets/spotlight_overlay.dart';
 
 enum StageRole { host, speaker, listener }
 
@@ -105,6 +106,7 @@ class _DiwanStageScreenState extends State<DiwanStageScreen> {
   LivePollData? _activePoll;
   bool _showQuestionToast = false;
   bool _showConfetti = false;
+  SpotlightData? _spotlightData;
 
   final _emojis = ['👏', '🔥', '❤️', '😂', '💡', '✨'];
 
@@ -162,6 +164,16 @@ class _DiwanStageScreenState extends State<DiwanStageScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const SizedBox(height: 16),
+                        if (_spotlightData != null && !_spotlightData!.isEmpty)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 16),
+                            child: SpotlightOverlay(
+                              data: _spotlightData!,
+                              isHost: widget.currentUserRole == StageRole.host,
+                              onDismiss: () =>
+                                  setState(() => _spotlightData = null),
+                            ),
+                          ),
                         _buildSpeakersGrid(),
                         const SizedBox(height: 28),
                         _buildListenersSection(),
@@ -663,6 +675,22 @@ class _DiwanStageScreenState extends State<DiwanStageScreen> {
                           _showConfetti = true;
                         });
                       },
+                    ),
+                  ),
+                  _ControlButton(
+                    icon: Icons.push_pin_rounded,
+                    label: 'تثبيت',
+                    isActive: _spotlightData != null,
+                    activeColor: BayanColors.accent,
+                    onTap: () => showSpotlightPicker(
+                      context,
+                      speakerNames: _placeholderSpeakers
+                          .map((m) => m.name)
+                          .toList(),
+                      speakerInitials: _placeholderSpeakers
+                          .map((m) => m.initial)
+                          .toList(),
+                      onPin: (data) => setState(() => _spotlightData = data),
                     ),
                   ),
                   _ControlButton(

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:bayan/core/theme/theme.dart';
 import 'package:bayan/core/widgets/glassmorphic_container.dart';
+import 'package:bayan/core/widgets/revenue_section.dart';
 
 class InsightsTab extends StatelessWidget {
   const InsightsTab({super.key});
@@ -32,6 +33,8 @@ class InsightsTab extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           _buildAchievements(),
+          const SizedBox(height: 24),
+          const RevenueSection(),
         ],
       ),
     );
