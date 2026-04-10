@@ -1,11 +1,14 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:bayan/core/theme/theme.dart';
 import 'package:bayan/core/widgets/glassmorphic_container.dart';
-import 'package:bayan/core/widgets/haptic_button.dart';
 import 'package:bayan/core/widgets/founder_glow_badge.dart';
 import 'package:bayan/core/widgets/shimmer_skeleton.dart';
+import 'package:bayan/core/widgets/audio_waveform_painter.dart';
+import 'package:bayan/core/widgets/haptic_button.dart';
+import 'package:bayan/core/widgets/voice_card.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -14,15 +17,207 @@ class ProfileScreen extends StatefulWidget {
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _ProfileScreenState extends State<ProfileScreen>
+    with TickerProviderStateMixin {
   bool _isLoading = true;
+  late final TabController _tabController;
+
+  static const _voiceGallery = [
+    VoiceCardData(
+      id: 'my-v1',
+      speakerName: 'عبدالله الكندري',
+      speakerInitial: 'ع',
+      title: 'عن فلسفة الإبداع',
+      duration: '٢:١٥',
+      likeCount: 42,
+      waveform: [
+        0.4,
+        0.7,
+        0.5,
+        0.9,
+        0.3,
+        0.6,
+        0.8,
+        0.5,
+        0.7,
+        0.4,
+        0.6,
+        0.3,
+        0.8,
+        0.5,
+        0.9,
+        0.4,
+        0.7,
+        0.3,
+        0.6,
+        0.8,
+      ],
+    ),
+    VoiceCardData(
+      id: 'my-v2',
+      speakerName: 'عبدالله الكندري',
+      speakerInitial: 'ع',
+      title: 'الشعر والموسيقى',
+      duration: '٣:٤٠',
+      likeCount: 78,
+      waveform: [
+        0.5,
+        0.3,
+        0.8,
+        0.6,
+        0.4,
+        0.7,
+        0.9,
+        0.5,
+        0.3,
+        0.6,
+        0.8,
+        0.4,
+        0.7,
+        0.5,
+        0.3,
+        0.9,
+        0.6,
+        0.8,
+        0.4,
+        0.7,
+      ],
+    ),
+    VoiceCardData(
+      id: 'my-v3',
+      speakerName: 'عبدالله الكندري',
+      speakerInitial: 'ع',
+      title: 'التصميم والتجربة',
+      duration: '١:٥٥',
+      likeCount: 31,
+      waveform: [
+        0.6,
+        0.4,
+        0.7,
+        0.5,
+        0.8,
+        0.3,
+        0.6,
+        0.9,
+        0.4,
+        0.7,
+        0.5,
+        0.8,
+        0.3,
+        0.6,
+        0.4,
+        0.9,
+        0.7,
+        0.5,
+        0.8,
+        0.3,
+      ],
+    ),
+    VoiceCardData(
+      id: 'my-v4',
+      speakerName: 'عبدالله الكندري',
+      speakerInitial: 'ع',
+      title: 'مجلس الأدب',
+      duration: '٤:٣٠',
+      likeCount: 95,
+      waveform: [
+        0.3,
+        0.6,
+        0.8,
+        0.4,
+        0.7,
+        0.5,
+        0.9,
+        0.3,
+        0.6,
+        0.8,
+        0.4,
+        0.7,
+        0.5,
+        0.3,
+        0.8,
+        0.6,
+        0.9,
+        0.4,
+        0.7,
+        0.5,
+      ],
+    ),
+    VoiceCardData(
+      id: 'my-v5',
+      speakerName: 'عبدالله الكندري',
+      speakerInitial: 'ع',
+      title: 'القيادة والإلهام',
+      duration: '٢:٥٠',
+      likeCount: 56,
+      waveform: [
+        0.7,
+        0.4,
+        0.6,
+        0.8,
+        0.3,
+        0.5,
+        0.7,
+        0.9,
+        0.4,
+        0.6,
+        0.3,
+        0.8,
+        0.5,
+        0.7,
+        0.4,
+        0.6,
+        0.9,
+        0.3,
+        0.8,
+        0.5,
+      ],
+    ),
+    VoiceCardData(
+      id: 'my-v6',
+      speakerName: 'عبدالله الكندري',
+      speakerInitial: 'ع',
+      title: 'نقاش عن المستقبل',
+      duration: '٥:١٠',
+      likeCount: 114,
+      waveform: [
+        0.5,
+        0.8,
+        0.3,
+        0.7,
+        0.6,
+        0.4,
+        0.9,
+        0.5,
+        0.7,
+        0.3,
+        0.6,
+        0.8,
+        0.4,
+        0.5,
+        0.7,
+        0.3,
+        0.9,
+        0.6,
+        0.4,
+        0.8,
+      ],
+    ),
+  ];
 
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(length: 2, vsync: this);
     Future.delayed(const Duration(milliseconds: 900), () {
       if (mounted) setState(() => _isLoading = false);
     });
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 
   @override
@@ -37,18 +232,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       backgroundColor: BayanColors.background,
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.only(bottom: 100),
-          child: Column(
-            children: [
-              _buildProfileHeader(context),
-              const SizedBox(height: 32),
-              _buildStatsRow(),
-              const SizedBox(height: 28),
-              const FounderGlowBadge(),
-              const SizedBox(height: 28),
-              _buildSettingsSection(),
-            ],
+        child: NestedScrollView(
+          headerSliverBuilder: (context, innerBoxIsScrolled) => [
+            SliverToBoxAdapter(child: _buildProfileHeader(context)),
+            SliverToBoxAdapter(child: _buildInfoSection()),
+            SliverToBoxAdapter(child: _buildSocialStats()),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: _buildTabBar(),
+              ),
+            ),
+          ],
+          body: TabBarView(
+            controller: _tabController,
+            children: [_buildVoiceGalleryTab(), _buildAboutTab()],
           ),
         ),
       ),
@@ -62,7 +260,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       children: [
         Container(
           width: double.infinity,
-          height: 200,
+          height: 180,
           decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topCenter,
@@ -159,9 +357,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildStatsRow() {
+  Widget _buildInfoSection() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 44, 20, 0),
+      padding: const EdgeInsets.fromLTRB(20, 52, 20, 0),
       child: Column(
         children: [
           Text(
@@ -180,56 +378,100 @@ class _ProfileScreenState extends State<ProfileScreen> {
               color: BayanColors.textSecondary,
             ),
           ),
-          const SizedBox(height: 24),
-          Row(
-            children: [
-              Expanded(
-                child: _StatCard(
-                  value: '٤٧',
-                  label: 'أصوات مشاركة',
-                  icon: Icons.mic_rounded,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _StatCard(
-                  value: '١٢',
-                  label: 'دعوات مرسلة',
-                  icon: Icons.card_giftcard_rounded,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _StatCard(
-                  value: '٨',
-                  label: 'ديوانيّات',
-                  icon: Icons.groups_rounded,
-                ),
-              ),
-            ],
+          const SizedBox(height: 12),
+          const FounderGlowBadge(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSocialStats() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+      child: Row(
+        children: [
+          Expanded(
+            child: _SocialStatButton(value: '٢٤٨', label: 'متابع'),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: _SocialStatButton(value: '١٣٦', label: 'متابَع'),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: _StatCard(
+              value: '٤٧',
+              label: 'مقطع صوتي',
+              icon: Icons.graphic_eq_rounded,
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildSettingsSection() {
+  Widget _buildTabBar() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Container(
+        decoration: BoxDecoration(
+          color: BayanColors.glassBackground,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: BayanColors.glassBorder),
+        ),
+        child: TabBar(
+          controller: _tabController,
+          indicator: BoxDecoration(
+            color: BayanColors.accent.withValues(alpha: 0.15),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(
+              color: BayanColors.accent.withValues(alpha: 0.3),
+            ),
+          ),
+          indicatorSize: TabBarIndicatorSize.tab,
+          dividerColor: Colors.transparent,
+          labelColor: BayanColors.accent,
+          unselectedLabelColor: BayanColors.textSecondary,
+          labelStyle: GoogleFonts.cairo(
+            fontSize: 14,
+            fontWeight: FontWeight.w700,
+          ),
+          unselectedLabelStyle: GoogleFonts.cairo(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
+          tabs: const [
+            Tab(text: 'معرض الأصوات'),
+            Tab(text: 'الإعدادات'),
+          ],
+          onTap: (_) => HapticFeedback.selectionClick(),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildVoiceGalleryTab() {
+    return GridView.builder(
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 120),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
+        childAspectRatio: 0.92,
+      ),
+      itemCount: _voiceGallery.length,
+      itemBuilder: (context, index) {
+        return _VoiceGalleryCard(data: _voiceGallery[index]);
+      },
+    );
+  }
+
+  Widget _buildAboutTab() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 120),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(right: 4, bottom: 12),
-            child: Text(
-              'الإعدادات',
-              style: GoogleFonts.cairo(
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-                color: BayanColors.textPrimary,
-              ),
-            ),
-          ),
           GlassmorphicContainer(
             borderRadius: 20,
             padding: EdgeInsets.zero,
@@ -302,6 +544,47 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 }
 
+class _SocialStatButton extends StatelessWidget {
+  final String value;
+  final String label;
+
+  const _SocialStatButton({required this.value, required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return HapticButton(
+      hapticType: HapticFeedbackType.selection,
+      onTap: () => HapticFeedback.selectionClick(),
+      child: GlassmorphicContainer(
+        borderRadius: 18,
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+        child: Column(
+          children: [
+            Text(
+              value,
+              style: GoogleFonts.cairo(
+                fontSize: 22,
+                fontWeight: FontWeight.w800,
+                color: BayanColors.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              label,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.cairo(
+                fontSize: 12,
+                color: BayanColors.accent,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _StatCard extends StatelessWidget {
   final String value;
   final String label;
@@ -317,15 +600,15 @@ class _StatCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GlassmorphicContainer(
       borderRadius: 18,
-      padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 8),
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
       child: Column(
         children: [
-          Icon(icon, color: BayanColors.accent, size: 22),
-          const SizedBox(height: 8),
+          Icon(icon, color: BayanColors.accent, size: 20),
+          const SizedBox(height: 4),
           Text(
             value,
             style: GoogleFonts.cairo(
-              fontSize: 24,
+              fontSize: 22,
               fontWeight: FontWeight.w800,
               color: BayanColors.textPrimary,
             ),
@@ -340,6 +623,148 @@ class _StatCard extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _VoiceGalleryCard extends StatefulWidget {
+  final VoiceCardData data;
+
+  const _VoiceGalleryCard({required this.data});
+
+  @override
+  State<_VoiceGalleryCard> createState() => _VoiceGalleryCardState();
+}
+
+class _VoiceGalleryCardState extends State<_VoiceGalleryCard>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _playController;
+  bool _isPlaying = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _playController =
+        AnimationController(vsync: this, duration: const Duration(seconds: 6))
+          ..addStatusListener((status) {
+            if (status == AnimationStatus.completed) {
+              setState(() => _isPlaying = false);
+              _playController.reset();
+            }
+          });
+  }
+
+  @override
+  void dispose() {
+    _playController.dispose();
+    super.dispose();
+  }
+
+  void _toggle() {
+    HapticFeedback.mediumImpact();
+    if (_isPlaying) {
+      _playController.stop();
+    } else {
+      _playController.forward();
+    }
+    setState(() => _isPlaying = !_isPlaying);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return HapticButton(
+      hapticType: HapticFeedbackType.selection,
+      onTap: _toggle,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: BayanColors.glassBackground,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: BayanColors.glassBorder),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  widget.data.title,
+                  style: GoogleFonts.cairo(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                    color: BayanColors.textPrimary,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const Spacer(),
+                SizedBox(
+                  height: 40,
+                  child: AnimatedBuilder(
+                    animation: _playController,
+                    builder: (context, _) {
+                      return CustomPaint(
+                        painter: AudioWaveformPainter(
+                          amplitudes: widget.data.waveform,
+                          progress: _playController.value,
+                          activeColor: BayanColors.accent,
+                          inactiveColor: BayanColors.textSecondary.withValues(
+                            alpha: 0.2,
+                          ),
+                          barWidth: 2.5,
+                          gap: 2.0,
+                        ),
+                        size: Size.infinite,
+                      );
+                    },
+                  ),
+                ),
+                const Spacer(),
+                Row(
+                  children: [
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 200),
+                      child: Icon(
+                        _isPlaying
+                            ? Icons.pause_circle_filled_rounded
+                            : Icons.play_circle_fill_rounded,
+                        key: ValueKey(_isPlaying),
+                        color: BayanColors.accent,
+                        size: 24,
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      widget.data.duration,
+                      style: GoogleFonts.cairo(
+                        fontSize: 11,
+                        color: BayanColors.textSecondary,
+                      ),
+                    ),
+                    const Spacer(),
+                    Icon(
+                      Icons.favorite_rounded,
+                      size: 14,
+                      color: BayanColors.accent.withValues(alpha: 0.5),
+                    ),
+                    const SizedBox(width: 3),
+                    Text(
+                      '${widget.data.likeCount}',
+                      style: GoogleFonts.cairo(
+                        fontSize: 11,
+                        color: BayanColors.textSecondary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -382,13 +807,12 @@ class _SettingsTile extends StatelessWidget {
                     ),
                   ),
                 ),
-                ?trailing,
-                if (trailing == null)
-                  const Icon(
-                    Icons.chevron_left_rounded,
-                    color: BayanColors.textSecondary,
-                    size: 22,
-                  ),
+                trailing ??
+                    const Icon(
+                      Icons.chevron_left_rounded,
+                      color: BayanColors.textSecondary,
+                      size: 22,
+                    ),
               ],
             ),
           ),

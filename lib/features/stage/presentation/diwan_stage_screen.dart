@@ -247,12 +247,12 @@ class _DiwanStageScreenState extends State<DiwanStageScreen> {
             ),
           ),
           Wrap(
-            spacing: 16,
+            spacing: 12,
             runSpacing: 20,
             alignment: WrapAlignment.center,
             children: _placeholderSpeakers.map((member) {
               return SizedBox(
-                width: 88,
+                width: 100,
                 child: Column(
                   children: [
                     SpeakingAvatar(

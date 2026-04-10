@@ -2,6 +2,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:bayan/core/theme/theme.dart';
+import 'package:bayan/core/widgets/audio_waveform_painter.dart';
 
 class SpeakingAvatar extends StatefulWidget {
   final String initial;
@@ -28,22 +29,26 @@ class SpeakingAvatar extends StatefulWidget {
 class _SpeakingAvatarState extends State<SpeakingAvatar>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
+  late final List<double> _waveAmplitudes;
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1200),
+      duration: const Duration(milliseconds: 2000),
     );
-    if (widget.isSpeaking) _controller.repeat(reverse: true);
+    if (widget.isSpeaking) _controller.repeat();
+
+    final rng = math.Random(widget.initial.hashCode);
+    _waveAmplitudes = List.generate(24, (_) => 0.3 + rng.nextDouble() * 0.7);
   }
 
   @override
   void didUpdateWidget(SpeakingAvatar oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.isSpeaking && !oldWidget.isSpeaking) {
-      _controller.repeat(reverse: true);
+      _controller.repeat();
     } else if (!widget.isSpeaking && oldWidget.isSpeaking) {
       _controller.animateTo(0.0, duration: const Duration(milliseconds: 300));
     }
@@ -57,21 +62,22 @@ class _SpeakingAvatarState extends State<SpeakingAvatar>
 
   @override
   Widget build(BuildContext context) {
+    final outerSize = widget.size + 28;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         SizedBox(
-          width: widget.size + 16,
-          height: widget.size + 16,
+          width: outerSize,
+          height: outerSize,
           child: AnimatedBuilder(
             animation: _controller,
             builder: (context, child) {
-              final pulse = widget.isSpeaking ? _controller.value : 0.0;
               return CustomPaint(
-                painter: _GlowRingPainter(
-                  progress: pulse,
+                painter: CircularWaveformPainter(
+                  amplitudes: _waveAmplitudes,
+                  animationValue: widget.isSpeaking ? _controller.value : 0.0,
                   color: widget.isMuted ? Colors.redAccent : widget.glowColor,
-                  isSpeaking: widget.isSpeaking,
+                  isActive: widget.isSpeaking,
                 ),
                 child: child,
               );
@@ -161,43 +167,4 @@ class _SpeakingAvatarState extends State<SpeakingAvatar>
       ],
     );
   }
-}
-
-class _GlowRingPainter extends CustomPainter {
-  final double progress;
-  final Color color;
-  final bool isSpeaking;
-
-  _GlowRingPainter({
-    required this.progress,
-    required this.color,
-    required this.isSpeaking,
-  });
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    if (!isSpeaking) return;
-
-    final center = Offset(size.width / 2, size.height / 2);
-    final radius = math.min(size.width, size.height) / 2;
-
-    final outerPaint = Paint()
-      ..color = color.withValues(alpha: 0.15 + progress * 0.2)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 3 + progress * 2
-      ..maskFilter = MaskFilter.blur(BlurStyle.normal, 4 + progress * 6);
-
-    canvas.drawCircle(center, radius - 1, outerPaint);
-
-    final innerPaint = Paint()
-      ..color = color.withValues(alpha: 0.3 + progress * 0.15)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2;
-
-    canvas.drawCircle(center, radius - 3, innerPaint);
-  }
-
-  @override
-  bool shouldRepaint(_GlowRingPainter oldDelegate) =>
-      oldDelegate.progress != progress || oldDelegate.isSpeaking != isSpeaking;
 }

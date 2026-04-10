@@ -6,11 +6,14 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:bayan/core/models/diwan.dart';
 import 'package:bayan/core/theme/theme.dart';
 import 'package:bayan/core/widgets/glassmorphic_container.dart';
+import 'package:bayan/core/widgets/voice_card.dart';
 import 'package:bayan/features/diwan/presentation/providers/diwan_provider.dart';
 import 'package:bayan/core/widgets/pulsing_dot.dart';
 import 'package:bayan/core/widgets/haptic_button.dart';
 import 'package:bayan/core/widgets/shimmer_skeleton.dart';
 import 'package:bayan/features/diwan/presentation/diwan_detail_screen.dart';
+import 'package:bayan/features/profile/presentation/speaker_profile_screen.dart';
+import 'package:bayan/features/notifications/presentation/notification_center_screen.dart';
 
 class _DiwanData {
   final String id;
@@ -158,6 +161,28 @@ class _DiwanFeedScreenState extends ConsumerState<DiwanFeedScreen>
     super.dispose();
   }
 
+  void _openNotifications() {
+    HapticFeedback.selectionClick();
+    Navigator.of(context).push(
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            const NotificationCenterScreen(),
+        transitionDuration: const Duration(milliseconds: 400),
+        reverseTransitionDuration: const Duration(milliseconds: 350),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          final slideDown =
+              Tween<Offset>(
+                begin: const Offset(0, -1),
+                end: Offset.zero,
+              ).animate(
+                CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
+              );
+          return SlideTransition(position: slideDown, child: child);
+        },
+      ),
+    );
+  }
+
   void _openDiwan(_DiwanData diwan) {
     HapticFeedback.mediumImpact();
     Navigator.of(context).push(
@@ -214,6 +239,7 @@ class _DiwanFeedScreenState extends ConsumerState<DiwanFeedScreen>
           slivers: [
             SliverToBoxAdapter(child: _buildHeader()),
             SliverToBoxAdapter(child: _buildLiveIndicator(diwans)),
+            SliverToBoxAdapter(child: _buildTopVoices()),
             SliverPadding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               sliver: SliverList(
@@ -286,21 +312,257 @@ class _DiwanFeedScreenState extends ConsumerState<DiwanFeedScreen>
               ],
             ),
           ),
-          HapticButton(
-            hapticType: HapticFeedbackType.selection,
-            onTap: () {},
-            child: GlassmorphicContainer(
-              borderRadius: 16,
-              padding: const EdgeInsets.all(12),
-              blur: 10,
-              child: const Icon(
-                Icons.tune_rounded,
-                color: BayanColors.accent,
-                size: 22,
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              HapticButton(
+                hapticType: HapticFeedbackType.selection,
+                onTap: () => _openNotifications(),
+                child: GlassmorphicContainer(
+                  borderRadius: 16,
+                  padding: const EdgeInsets.all(12),
+                  blur: 10,
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      const Icon(
+                        Icons.notifications_none_rounded,
+                        color: BayanColors.accent,
+                        size: 22,
+                      ),
+                      Positioned(
+                        top: -2,
+                        right: -2,
+                        child: Container(
+                          width: 8,
+                          height: 8,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: BayanColors.accent,
+                            boxShadow: [
+                              BoxShadow(
+                                color: BayanColors.accent.withValues(
+                                  alpha: 0.5,
+                                ),
+                                blurRadius: 4,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ),
+              const SizedBox(width: 10),
+              HapticButton(
+                hapticType: HapticFeedbackType.selection,
+                onTap: () {},
+                child: GlassmorphicContainer(
+                  borderRadius: 16,
+                  padding: const EdgeInsets.all(12),
+                  blur: 10,
+                  child: const Icon(
+                    Icons.tune_rounded,
+                    color: BayanColors.accent,
+                    size: 22,
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
+      ),
+    );
+  }
+
+  static const _topVoices = [
+    VoiceCardData(
+      id: 'v1',
+      speakerName: 'عبدالله المطيري',
+      speakerInitial: 'ع',
+      title: 'عن جمال الشعر النبطي',
+      duration: '٢:٣٤',
+      likeCount: 89,
+      waveform: [
+        0.3,
+        0.5,
+        0.7,
+        0.4,
+        0.8,
+        0.6,
+        0.9,
+        0.5,
+        0.7,
+        0.3,
+        0.6,
+        0.8,
+        0.4,
+        0.7,
+        0.5,
+        0.9,
+        0.3,
+        0.6,
+        0.8,
+        0.4,
+        0.7,
+        0.5,
+        0.3,
+        0.8,
+        0.6,
+        0.4,
+        0.7,
+        0.9,
+        0.5,
+        0.3,
+      ],
+    ),
+    VoiceCardData(
+      id: 'v2',
+      speakerName: 'سارة الفهد',
+      speakerInitial: 'س',
+      title: 'مستقبل الذكاء الاصطناعي',
+      duration: '٤:١٢',
+      likeCount: 156,
+      waveform: [
+        0.4,
+        0.6,
+        0.3,
+        0.8,
+        0.5,
+        0.7,
+        0.4,
+        0.9,
+        0.6,
+        0.3,
+        0.7,
+        0.5,
+        0.8,
+        0.4,
+        0.6,
+        0.3,
+        0.9,
+        0.7,
+        0.5,
+        0.8,
+        0.4,
+        0.6,
+        0.3,
+        0.7,
+        0.9,
+        0.5,
+        0.8,
+        0.4,
+        0.6,
+        0.3,
+      ],
+    ),
+    VoiceCardData(
+      id: 'v3',
+      speakerName: 'فهد العنزي',
+      speakerInitial: 'ف',
+      title: 'ريادة الأعمال في الكويت',
+      duration: '١:٤٨',
+      likeCount: 67,
+      waveform: [
+        0.5,
+        0.3,
+        0.7,
+        0.6,
+        0.4,
+        0.8,
+        0.5,
+        0.3,
+        0.9,
+        0.7,
+        0.4,
+        0.6,
+        0.8,
+        0.3,
+        0.5,
+        0.7,
+        0.4,
+        0.9,
+        0.6,
+        0.3,
+        0.8,
+        0.5,
+        0.7,
+        0.4,
+        0.6,
+        0.3,
+        0.9,
+        0.5,
+        0.7,
+        0.8,
+      ],
+    ),
+  ];
+
+  Widget _buildTopVoices() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(24, 4, 24, 14),
+          child: Row(
+            children: [
+              const Icon(
+                Icons.graphic_eq_rounded,
+                color: BayanColors.accent,
+                size: 20,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                'أبرز الأصوات',
+                style: GoogleFonts.cairo(
+                  fontSize: 17,
+                  fontWeight: FontWeight.w700,
+                  color: BayanColors.textPrimary,
+                ),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(
+          height: 195,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            itemCount: _topVoices.length,
+            separatorBuilder: (context, index) => const SizedBox(width: 14),
+            itemBuilder: (context, index) {
+              final voice = _topVoices[index];
+              return VoiceCard(
+                data: voice,
+                onTapProfile: () => _openSpeakerProfile(voice),
+              );
+            },
+          ),
+        ),
+        const SizedBox(height: 24),
+      ],
+    );
+  }
+
+  void _openSpeakerProfile(VoiceCardData voice) {
+    HapticFeedback.selectionClick();
+    Navigator.of(context).push(
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            SpeakerProfileScreen(
+              heroTag: 'voice-speaker-${voice.id}',
+              name: voice.speakerName,
+              initial: voice.speakerInitial,
+            ),
+        transitionDuration: const Duration(milliseconds: 500),
+        reverseTransitionDuration: const Duration(milliseconds: 400),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(
+            opacity: CurvedAnimation(parent: animation, curve: Curves.easeOut),
+            child: child,
+          );
+        },
       ),
     );
   }

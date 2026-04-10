@@ -5,6 +5,8 @@ import 'package:bayan/core/repositories/diwan_repository.dart';
 import 'package:bayan/core/repositories/message_repository.dart';
 import 'package:bayan/core/repositories/participant_repository.dart';
 import 'package:bayan/core/repositories/profile_repository.dart';
+import 'package:bayan/core/repositories/social_repository.dart';
+import 'package:bayan/core/repositories/voice_repository.dart';
 
 final supabaseClientProvider = Provider<SupabaseClient>(
   (ref) => Supabase.instance.client,
@@ -28,4 +30,12 @@ final profileRepositoryProvider = Provider<ProfileRepository>(
 
 final participantRepositoryProvider = Provider<ParticipantRepository>(
   (ref) => ParticipantRepository(ref.read(supabaseClientProvider)),
+);
+
+final socialRepositoryProvider = Provider<SocialRepository>(
+  (ref) => SocialRepository(ref.read(supabaseClientProvider)),
+);
+
+final voiceRepositoryProvider = Provider<VoiceRepository>(
+  (ref) => VoiceRepository(ref.read(supabaseClientProvider)),
 );
