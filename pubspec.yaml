@@ -1,7 +1,7 @@
 name: bayan
 description: "Bayan - Premium Arabic Content Platform"
 publish_to: 'none'
-version: 2.1.0+11
+version: 2.2.0+12
 
 environment:
   sdk: ^3.11.1

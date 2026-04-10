@@ -39,6 +39,11 @@ import 'package:bayan/core/services/bug_report_service.dart';
 import 'package:bayan/core/services/predictive_notification_service.dart';
 import 'package:bayan/core/services/rate_limiter_service.dart';
 import 'package:bayan/core/services/production_service.dart';
+import 'package:bayan/core/repositories/onboarding_repository.dart';
+import 'package:bayan/core/repositories/voice_print_repository.dart';
+import 'package:bayan/core/services/feed_warmup_service.dart';
+import 'package:bayan/core/services/voice_print_service.dart';
+import 'package:bayan/core/providers/e2e_provider.dart';
 
 final supabaseClientProvider = Provider<SupabaseClient>(
   (ref) => Supabase.instance.client,
@@ -205,4 +210,26 @@ final rateLimiterServiceProvider = Provider<RateLimiterService>(
 
 final productionServiceProvider = Provider<ProductionService>(
   (ref) => ProductionService(ref.read(supabaseClientProvider)),
+);
+
+final onboardingRepositoryProvider = Provider<OnboardingRepository>(
+  (ref) => OnboardingRepository(ref.read(supabaseClientProvider)),
+);
+
+final voicePrintRepositoryProvider = Provider<VoicePrintRepository>(
+  (ref) => VoicePrintRepository(ref.read(supabaseClientProvider)),
+);
+
+final feedWarmupServiceProvider = Provider<FeedWarmupService>(
+  (ref) => FeedWarmupService(
+    ref.read(recommendationRepositoryProvider),
+    ref.read(prefetchServiceProvider),
+  ),
+);
+
+final voicePrintServiceProvider = Provider<VoicePrintService>(
+  (ref) => VoicePrintService(
+    ref.read(e2eServiceProvider),
+    ref.read(voicePrintRepositoryProvider),
+  ),
 );
