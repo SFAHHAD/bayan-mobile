@@ -1,0 +1,58 @@
+{
+  "@@locale": "ar_KW",
+  "@@last_modified": "2026-04-10",
+
+  "loading": "يحمّل...",
+  "error_generic": "صار خطأ مو متوقع",
+  "error_network": "ما قدرنا نتصل بالشبكة",
+  "retry": "حاول مرة ثانية",
+
+  "search_hint": "دوّر على ديوان أو شخص...",
+
+  "diwan_live": "لايف",
+  "diwan_premium": "مميّز",
+
+  "join_diwan": "ادخل الديوان",
+  "leave_diwan": "اطلع من الديوان",
+
+  "listeners_count": "{count} مستمع",
+
+  "follow": "تابع",
+  "unfollow": "ما راح تابع",
+
+  "send_gift": "أرسل هدية",
+
+  "purchase_ticket": "اشتري تذكرة",
+  "ticket_price": "سعر التذكرة: {price} رمز",
+  "insufficient_balance": "ما عندك رصيد يكفي",
+  "purchase_success": "تمّ الشراء",
+
+  "subscribe_series": "اشترك بالسلسلة",
+  "unsubscribe_series": "ألغِ الاشتراك",
+
+  "episode_number": "الحلقة {number}",
+  "new_episode_notification": "حلقة جديدة في {seriesTitle}",
+
+  "clear_history": "احذف السجل",
+  "clear_history_confirm": "تبي تحذف كل سجل نشاطك؟ ما تقدر ترجع بعدين.",
+  "history_cleared": "تم الحذف",
+
+  "pause_logging": "وقّف التتبع",
+  "resume_logging": "شغّل التتبع",
+
+  "apply_verification": "قدّم طلب التوثيق",
+  "verification_pending": "طلبك عند المراجعة",
+  "verification_approved": "حسابك موثّق الحين",
+  "verification_rejected": "رفضوا طلبك",
+
+  "crash_recovery_title": "استعادة الجلسة",
+  "crash_recovery_message": "يبيّن إن التطبيق توقف فجأة المرة اللي فاتت. تبي تمسح الذاكرة وترجع جلستك؟",
+  "clear_cache_restore": "امسح الذاكرة وارجع الجلسة",
+  "dismiss": "تجاهل",
+
+  "maintenance_mode": "التطبيق على صيانة هالحين",
+  "update_required": "لازم تحدّث التطبيق عشان تكمل",
+
+  "language_classical": "الفصحى",
+  "language_kuwaiti": "الكويتي"
+}

@@ -21,6 +21,9 @@ import 'package:bayan/core/repositories/verification_repository.dart';
 import 'package:bayan/core/repositories/series_repository.dart';
 import 'package:bayan/core/repositories/recommendation_repository.dart';
 import 'package:bayan/core/repositories/activity_log_repository.dart';
+import 'package:bayan/core/repositories/log_repository.dart';
+import 'package:bayan/core/repositories/config_repository.dart';
+import 'package:bayan/core/services/crash_recovery_service.dart';
 
 final supabaseClientProvider = Provider<SupabaseClient>(
   (ref) => Supabase.instance.client,
@@ -108,4 +111,19 @@ final recommendationRepositoryProvider = Provider<RecommendationRepository>(
 
 final activityLogRepositoryProvider = Provider<ActivityLogRepository>(
   (ref) => ActivityLogRepository(ref.read(supabaseClientProvider)),
+);
+
+final logRepositoryProvider = Provider<LogRepository>(
+  (ref) => LogRepository(ref.read(supabaseClientProvider)),
+);
+
+final configRepositoryProvider = Provider<ConfigRepository>(
+  (ref) => ConfigRepository(ref.read(supabaseClientProvider)),
+);
+
+final crashRecoveryServiceProvider = Provider<CrashRecoveryService>(
+  (ref) => CrashRecoveryService(
+    ref.read(logRepositoryProvider),
+    ref.read(supabaseClientProvider),
+  ),
 );

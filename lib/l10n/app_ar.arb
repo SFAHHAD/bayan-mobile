@@ -1,0 +1,201 @@
+{
+  "@@locale": "ar",
+  "@@last_modified": "2026-04-10",
+
+  "appName": "بيان",
+  "@appName": { "description": "Application name" },
+
+  "loading": "جارٍ التحميل...",
+  "@loading": { "description": "Generic loading indicator text" },
+
+  "error_generic": "حدث خطأ غير متوقع",
+  "@error_generic": { "description": "Generic error message" },
+
+  "error_network": "تعذّر الاتصال بالشبكة",
+  "@error_network": { "description": "Network error message" },
+
+  "retry": "إعادة المحاولة",
+  "@retry": { "description": "Retry button label" },
+
+  "cancel": "إلغاء",
+  "@cancel": { "description": "Cancel button label" },
+
+  "confirm": "تأكيد",
+  "@confirm": { "description": "Confirm button label" },
+
+  "save": "حفظ",
+  "@save": { "description": "Save button label" },
+
+  "delete": "حذف",
+  "@delete": { "description": "Delete button label" },
+
+  "close": "إغلاق",
+  "@close": { "description": "Close button label" },
+
+  "search": "بحث",
+  "@search": { "description": "Search label" },
+
+  "search_hint": "ابحث عن ديوان أو مستخدم...",
+  "@search_hint": { "description": "Search input hint" },
+
+  "home": "الرئيسية",
+  "@home": { "description": "Home tab label" },
+
+  "discover": "اكتشف",
+  "@discover": { "description": "Discover tab label" },
+
+  "notifications": "الإشعارات",
+  "@notifications": { "description": "Notifications tab label" },
+
+  "profile": "الملف الشخصي",
+  "@profile": { "description": "Profile tab label" },
+
+  "diwan_live": "مباشر",
+  "@diwan_live": { "description": "Live diwan badge" },
+
+  "diwan_premium": "مميّز",
+  "@diwan_premium": { "description": "Premium diwan badge" },
+
+  "join_diwan": "انضمّ للديوان",
+  "@join_diwan": { "description": "Join diwan button" },
+
+  "leave_diwan": "مغادرة الديوان",
+  "@leave_diwan": { "description": "Leave diwan button" },
+
+  "listeners_count": "{count} مستمع",
+  "@listeners_count": {
+    "description": "Listener count label",
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+
+  "follow": "متابعة",
+  "@follow": { "description": "Follow button" },
+
+  "unfollow": "إلغاء المتابعة",
+  "@unfollow": { "description": "Unfollow button" },
+
+  "followers": "المتابعون",
+  "@followers": { "description": "Followers label" },
+
+  "following": "المتابَعون",
+  "@following": { "description": "Following label" },
+
+  "verified": "موثّق",
+  "@verified": { "description": "Verified badge label" },
+
+  "gift": "هدية",
+  "@gift": { "description": "Gift label" },
+
+  "send_gift": "أرسل هدية",
+  "@send_gift": { "description": "Send gift button" },
+
+  "wallet": "المحفظة",
+  "@wallet": { "description": "Wallet label" },
+
+  "balance": "الرصيد",
+  "@balance": { "description": "Balance label" },
+
+  "purchase_ticket": "شراء تذكرة",
+  "@purchase_ticket": { "description": "Purchase ticket button" },
+
+  "ticket_price": "سعر التذكرة: {price} رمز",
+  "@ticket_price": {
+    "description": "Ticket price with token count",
+    "placeholders": {
+      "price": { "type": "int" }
+    }
+  },
+
+  "insufficient_balance": "رصيدك غير كافٍ لإتمام العملية",
+  "@insufficient_balance": { "description": "Insufficient balance error" },
+
+  "purchase_success": "تمّت عملية الشراء بنجاح",
+  "@purchase_success": { "description": "Purchase success message" },
+
+  "series": "السلاسل",
+  "@series": { "description": "Series label" },
+
+  "subscribe_series": "اشترك في السلسلة",
+  "@subscribe_series": { "description": "Subscribe to series button" },
+
+  "unsubscribe_series": "إلغاء الاشتراك",
+  "@unsubscribe_series": { "description": "Unsubscribe from series" },
+
+  "episode_number": "الحلقة {number}",
+  "@episode_number": {
+    "description": "Episode number label",
+    "placeholders": {
+      "number": { "type": "int" }
+    }
+  },
+
+  "new_episode_notification": "حلقة جديدة في {seriesTitle}",
+  "@new_episode_notification": {
+    "description": "New episode notification title",
+    "placeholders": {
+      "seriesTitle": { "type": "String" }
+    }
+  },
+
+  "activity_log": "سجل النشاط",
+  "@activity_log": { "description": "Activity log label" },
+
+  "clear_history": "حذف السجل",
+  "@clear_history": { "description": "Clear activity history button" },
+
+  "clear_history_confirm": "هل تريد حذف سجل نشاطك بالكامل؟ لا يمكن التراجع عن هذا الإجراء.",
+  "@clear_history_confirm": { "description": "Clear history confirmation message" },
+
+  "history_cleared": "تم حذف سجل النشاط بنجاح",
+  "@history_cleared": { "description": "History cleared success message" },
+
+  "pause_logging": "إيقاف تتبع النشاط",
+  "@pause_logging": { "description": "Pause activity logging label" },
+
+  "resume_logging": "استئناف تتبع النشاط",
+  "@resume_logging": { "description": "Resume activity logging label" },
+
+  "verification_title": "توثيق الحساب",
+  "@verification_title": { "description": "Verification screen title" },
+
+  "apply_verification": "تقدّم بطلب التوثيق",
+  "@apply_verification": { "description": "Apply for verification button" },
+
+  "verification_pending": "طلبك قيد المراجعة",
+  "@verification_pending": { "description": "Verification pending status" },
+
+  "verification_approved": "تمّ توثيق حسابك",
+  "@verification_approved": { "description": "Verification approved status" },
+
+  "verification_rejected": "تمّ رفض طلبك",
+  "@verification_rejected": { "description": "Verification rejected status" },
+
+  "crash_recovery_title": "استعادة الجلسة",
+  "@crash_recovery_title": { "description": "Crash recovery dialog title" },
+
+  "crash_recovery_message": "يبدو أنّ التطبيق أُغلق بشكل غير متوقع في الجلسة السابقة. هل تريد مسح ذاكرة التخزين المؤقت واستعادة جلستك؟",
+  "@crash_recovery_message": { "description": "Crash recovery dialog message" },
+
+  "clear_cache_restore": "مسح الذاكرة المؤقتة واستعادة الجلسة",
+  "@clear_cache_restore": { "description": "Clear cache & restore session button" },
+
+  "dismiss": "تجاهل",
+  "@dismiss": { "description": "Dismiss button" },
+
+  "maintenance_mode": "التطبيق في وضع الصيانة",
+  "@maintenance_mode": { "description": "Maintenance mode banner" },
+
+  "update_required": "يرجى تحديث التطبيق للاستمرار",
+  "@update_required": { "description": "Force update message" },
+
+  "language_classical": "العربية الفصحى",
+  "@language_classical": { "description": "Classical Arabic dialect name" },
+
+  "language_kuwaiti": "اللهجة الكويتية",
+  "@language_kuwaiti": { "description": "Kuwaiti dialect name" },
+
+  "change_language": "تغيير اللغة",
+  "@change_language": { "description": "Change language button" }
+}
